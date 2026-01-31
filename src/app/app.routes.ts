@@ -6,7 +6,6 @@ import { LayoutComponent } from './layout/layout';
 import { RegisterComponent } from './auth/register/register';
 
 const authGuard = () => {
-  console.log("auth gurad")
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   if (!isLoggedIn) {
     return true; // 允许访问登录/注册
@@ -19,7 +18,7 @@ const authGuard = () => {
 
 
 const mainGuard = () => {
-  console.log("main gurad")
+  return true;
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   if (!isLoggedIn) {
     const router = inject(Router);

@@ -3,7 +3,11 @@ import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app';
 
 // 👇 必须导入 micro-app（注册 Web Component）
-import 'micro-app';
+import 'zone.js'
+
+import microApp from '@micro-zoe/micro-app';
+
+microApp.start();
 
 // import { GlobalErrorHandler } from './app/core/handlers/global-error.handler';
 // import { ErrorHandler } from '@angular/core';

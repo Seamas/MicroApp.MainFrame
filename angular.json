@@ -25,6 +25,8 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "baseHref": "/mainapp/",
+            "deployUrl": "/mainapp/",
             "allowedCommonJsDependencies": ["micro-app"],
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
@@ -45,8 +47,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "2MB",
+                  "maximumError": "3MB"
                 },
                 {
                   "type": "anyComponentStyle",

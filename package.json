@@ -30,7 +30,7 @@
     "@angular/platform-browser": "^21.1.0",
     "@angular/router": "^21.1.0",
     "@ant-design/icons-angular": "^21.0.0",
-    "micro-app": "^1.0.2",
+    "@micro-zoe/micro-app": "^1.0.0-rc.29",
     "ng-zorro-antd": "^21.0.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
