@@ -1,0 +1,39 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100vh; /* 占据视口全高 */
+  overflow: hidden; /* 防止出现滚动条 */
+}
+
+:host > nz-layout {
+  min-height: 100vh;
+  width: 100vw;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+nz-sider {
+  text-align: center;
+  color: #fff;
+  line-height: 120px;
+}
+
+hz-header, 
+nz-footer {
+  text-align: center;
+  color: #fff;
+}
+
+
+nz-header {
+  height: 64px;
+  padding-inline: 48px;
+  line-height: 64px;
+}
+
+nz-content {
+  text-align: center;
+  color: #fff;
+  min-height: 120px;
+  line-height: 120px;
+}

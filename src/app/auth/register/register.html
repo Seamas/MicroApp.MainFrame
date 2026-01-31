@@ -1,0 +1,65 @@
+<div class="register-container">
+  <div class="register-form">
+    <h2>用户注册</h2>
+
+    @if (errorMessage) {
+      <nz-alert nzType="error" [nzMessage]="errorMessage" nzShowIcon></nz-alert>
+    }
+
+    <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+      <nz-form-item>
+        <nz-form-control nzErrorTip="请输入至少3位用户名">
+          <nz-input-group nzPrefixIcon="user">
+            <input
+              formControlName="username"
+              nz-input
+              placeholder="用户名"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-control nzErrorTip="请输入至少6位密码">
+          <nz-input-group nzPrefixIcon="lock">
+            <input
+              formControlName="password"
+              nz-input
+              type="password"
+              placeholder="密码"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-control 
+          nzErrorTip="两次输入的密码不一致"
+          [nzValidateStatus]="validateForm.hasError('mismatch') ? 'error' : ''"
+        >
+          <nz-input-group nzPrefixIcon="lock">
+            <input
+              formControlName="confirmPassword"
+              nz-input
+              type="password"
+              placeholder="确认密码"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+
+      <button
+        nz-button
+        nzType="primary"
+        [disabled]="!validateForm.valid"
+        style="width: 100%; margin-top: 24px;"
+      >
+        注册
+      </button>
+
+      <div class="footer">
+        已有账号？<a (click)="goToLogin()">立即登录</a>
+      </div>
+    </form>
+  </div>
+</div>
