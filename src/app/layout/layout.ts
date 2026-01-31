@@ -1,5 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule} from 'ng-zorro-antd/menu';
@@ -17,6 +17,8 @@ export class LayoutComponent  {
 
   isCollapsed = false;
 
+  constructor(private router: Router){}
+
   apps = [
     { name: 'sina', url: 'http://localhost:5173/#/' },
     { name: '163', url: 'http://localhost:5173/#/' }
@@ -32,7 +34,7 @@ export class LayoutComponent  {
   logout() {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('username');
-    window.location.href = '/login';
+    this.router.navigate(["/login"]);
   }
 
 }

@@ -1,9 +1,14 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
-import { App } from './app/app';
+import { AppComponent } from './app/app';
 
 // 👇 必须导入 micro-app（注册 Web Component）
 import 'micro-app';
 
-bootstrapApplication(App, appConfig)
-  .catch((err) => console.error(err));
+// import { GlobalErrorHandler } from './app/core/handlers/global-error.handler';
+// import { ErrorHandler } from '@angular/core';
+
+
+// 启动应用，并提供全局错误处理器
+bootstrapApplication(AppComponent, appConfig)
+  .catch(err => console.error('Bootstrap failed:', err));
