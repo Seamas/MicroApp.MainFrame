@@ -1,0 +1,8 @@
+{
+  "/rbac": {
+    "target": "http://localhost:5241",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
