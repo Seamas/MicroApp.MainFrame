@@ -6,6 +6,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -26,10 +27,12 @@ export class RegisterComponent {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.validateForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
     }, { validators: this.confirmPasswordValidator });
@@ -43,13 +46,18 @@ export class RegisterComponent {
 
   submitForm(): void {
     if (this.validateForm.valid) {
-      const { username, password } = this.validateForm.value;
+      const { username, email, password } = this.validateForm.value;
       
       // 模拟注册（实际应调用 API）
-      console.log('注册用户:', { username, password });
+      this.authService.register({username, email, password})
+      .subscribe(res => {
+        console.log(res);
+              // 跳转到登录页
+        this.router.navigate(['/login']);
+      })
+
       
-      // 跳转到登录页
-      this.router.navigate(['/login']);
+
     } else {
       Object.values(this.validateForm.controls).forEach(control => {
         if (control.invalid) {

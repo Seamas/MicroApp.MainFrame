@@ -12,18 +12,31 @@ interface LoginResponse {
   username: string;
 }
 
+
+interface RegisterRequest {
+  username: string;
+  email: string;
+  password: string;
+}
+
+
+interface RegisterResponse {
+
+}
+
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = '/api/'; // 替换为你的 API 地址
 
   constructor(private http: HttpClient) {}
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
     // 注意：这里直接返回 LoginResponse，因为拦截器已提取 data
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, credentials);
+    return this.http.post<LoginResponse>(`/rbac/auth/login`, credentials);
   }
 
-  register(credentials: LoginRequest): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/auth/register`, credentials);
+  register(user: RegisterRequest): Observable<RegisterResponse> {
+      return this.http.post<RegisterRequest>(`/rbac/users/create`, user);
+
   }
 }

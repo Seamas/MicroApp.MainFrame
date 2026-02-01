@@ -11,19 +11,22 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
       'Content-Type': 'application/json'
     }
   });
-
   return next(clonedReq).pipe(
     map(event => {
-      if (event.type === 0) {
+      if (event.type === 4) {
         const response = event as any;
         if (response.body && typeof response.body === 'object') {
           const apiResult = response.body;
+
+          console.log("apiResult:");
+          console.log(apiResult);
 
           // 检查是否为 ApiResult 结构
           if (apiResult.hasOwnProperty('success')) {
             if (apiResult.success) {
               return response.clone({ body: apiResult.data });
             } else {
+              console.log("error message: " + apiResult.message);
               throw new Error(apiResult.message || '请求失败');
             }
           }

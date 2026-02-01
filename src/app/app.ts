@@ -4,7 +4,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule} from 'ng-zorro-antd/menu';
 
-import { UserOutline, LockOutline, MenuFoldOutline, MenuUnfoldOutline  } from '@ant-design/icons-angular/icons';
+
 
 @Component({
   selector: 'app-root',
@@ -21,12 +21,5 @@ import { UserOutline, LockOutline, MenuFoldOutline, MenuUnfoldOutline  } from '@
 export class AppComponent {
   isCollapsed = false;
 
-  constructor() {
-    NzIconModule.forRoot([
-      UserOutline,
-      LockOutline,
-      MenuFoldOutline,
-      MenuUnfoldOutline
-    ]);
-  }
+  constructor() {}
 }

@@ -18,7 +18,6 @@ const authGuard = () => {
 
 
 const mainGuard = () => {
-  return true;
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   if (!isLoggedIn) {
     const router = inject(Router);
