@@ -1,12 +1,13 @@
 // src/app/auth/register/register.ts
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControlOptions } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService } from '../../../core/services/auth.service';
+
 
 @Component({
   selector: 'app-register',
@@ -21,7 +22,7 @@ import { AuthService } from '../../core/services/auth.service';
   templateUrl: './register.html',
   styleUrls: ['./register.scss']
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   validateForm!: FormGroup;
   errorMessage: string | null = null;
 
@@ -29,16 +30,21 @@ export class RegisterComponent {
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService
-  ) {
+  ) {}
+
+  
+  ngOnInit(): void {
     this.validateForm = this.fb.group({
-      username: ['', [Validators.required, Validators.minLength(3)]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]]
-    }, { validators: this.confirmPasswordValidator });
+      username: ['', {validators: [Validators.required, Validators.minLength(3)]}],
+      email: ['', {validators:[Validators.required, Validators.email]}],
+      nickname: ['', {validators:[Validators.required, Validators.minLength(4), Validators.maxLength(10)]}],
+      password: ['', {validators:[Validators.required, Validators.minLength(6)]}],
+      confirmPassword: ['', {validators:[Validators.required]}]
+    }, { validators: this.confirmPasswordValidator.bind(this) } as AbstractControlOptions);
   }
 
-  confirmPasswordValidator(form: FormGroup) {
+  confirmPasswordValidator(control: AbstractControlOptions) {
+    const form = control as FormGroup;
     const password = form.get('password')?.value;
     const confirmPassword = form.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { mismatch: true };
@@ -46,18 +52,13 @@ export class RegisterComponent {
 
   submitForm(): void {
     if (this.validateForm.valid) {
-      const { username, email, password } = this.validateForm.value;
+      const { username, nickname, email, password } = this.validateForm.value;
       
       // 模拟注册（实际应调用 API）
-      this.authService.register({username, email, password})
+      this.authService.register({username, nickname, email, password})
       .subscribe(res => {
-        console.log(res);
-              // 跳转到登录页
         this.router.navigate(['/login']);
       })
-
-      
-
     } else {
       Object.values(this.validateForm.controls).forEach(control => {
         if (control.invalid) {

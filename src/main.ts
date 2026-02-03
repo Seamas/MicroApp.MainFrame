@@ -9,10 +9,6 @@ import microApp from '@micro-zoe/micro-app';
 
 microApp.start();
 
-// import { GlobalErrorHandler } from './app/core/handlers/global-error.handler';
-// import { ErrorHandler } from '@angular/core';
-
-
 // 启动应用，并提供全局错误处理器
 bootstrapApplication(AppComponent, appConfig)
   .catch(err => console.error('Bootstrap failed:', err));

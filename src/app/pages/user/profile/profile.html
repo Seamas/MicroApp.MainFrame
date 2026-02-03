@@ -1,0 +1,32 @@
+<nz-card nzTitle="用户信息" nzBordered>
+  <form nz-form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6" nzFor="username" nzRequired>用户名</nz-form-label>
+      <nz-form-control [nzSpan]="14">
+        <input nz-input formControlName="username" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6" nzFor="nickname" nzRequired>昵称</nz-form-label>
+      <nz-form-control [nzSpan]="14" nzErrorTip="请输入昵称">
+        <input nz-input formControlName="nickname" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6" nzFor="email" nzRequired>电子邮箱</nz-form-label>
+      <nz-form-control [nzSpan]="14" nzErrorTip="请输入有效的邮箱地址">
+        <input nz-input type="email" formControlName="email" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control>
+        <button nz-button nzType="primary" [nzLoading]="loading" [disabled]="profileForm.invalid">
+          保存信息
+        </button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</nz-card>

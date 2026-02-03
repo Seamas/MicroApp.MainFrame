@@ -1,21 +1,32 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, AfterViewInit, OnDestroy, Renderer2 } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, AfterViewInit, OnDestroy, Renderer2, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule} from 'ng-zorro-antd/menu';
+import { removeUserInfo } from '../core/stores/userstore';
+import { AuthService } from '../core/services/auth.service';
+
+import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
+import { finalize } from 'rxjs';
 
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [ RouterModule, NzIconModule, NzLayoutModule, NzMenuModule ],
+  imports: [
+     RouterModule, 
+     NzIconModule, 
+     NzLayoutModule, 
+     NzMenuModule, 
+     NzDropdownModule 
+    ],
   templateUrl: './layout.html',
   styleUrl: './layout.scss',
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
   ]
 })
-export class LayoutComponent implements AfterViewInit, OnDestroy  {
+export class LayoutComponent implements AfterViewInit, OnDestroy, OnInit  {
   @ViewChild("microapp", { static: true }) container!: ElementRef;
 
   isCollapsed = false;
@@ -23,6 +34,8 @@ export class LayoutComponent implements AfterViewInit, OnDestroy  {
   subappUrl: string = `${window.location.origin}`
 
   private microAppElement: any;
+  currentApp: (typeof this.apps)[0] | null = null;
+
 
   apps = [
     { name: 'sina', url: 'http://localhost:8080/subapp/' },
@@ -32,24 +45,40 @@ export class LayoutComponent implements AfterViewInit, OnDestroy  {
 
   constructor(private router: Router,
     private renderer: Renderer2,
-    private el: ElementRef
+    public authService: AuthService
   ){}
 
 
-
-  currentApp: (typeof this.apps)[0] | null = null;
+  ngOnInit(): void {
+  }
 
   selectApp(app: (typeof this.apps)[0]) {
     this.currentApp = app;
-
     this.createMicroApp(this.currentApp.url, this.currentApp.name);
   }
 
-  logout() {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('username');
-    this.router.navigate(["/login"]);
+  goToProfile() {
+    this.router.navigate(["/profile"])
   }
+
+  changePassword() {
+    this.router.navigate(["/changePwd"])
+  }
+
+  logout() {
+    this.authService.logout()
+    .pipe(
+      finalize (() => 
+        setTimeout(() =>{
+          removeUserInfo();
+          this.router.navigate(["/login"]);
+        }, 1000)
+      )
+    )
+    .subscribe(res => {})
+  }
+
+
 
   createMicroApp(url: string, name: string = 'dynamic-app') {
     // 清理现有元素

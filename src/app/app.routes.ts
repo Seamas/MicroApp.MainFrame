@@ -1,12 +1,14 @@
 import { Routes, Router } from '@angular/router';
 import { inject } from '@angular/core';
 
-import { LoginComponent } from './auth/login/login';
+import { LoginComponent } from './pages/auth/login/login';
 import { LayoutComponent } from './layout/layout';
-import { RegisterComponent } from './auth/register/register';
+import { RegisterComponent } from './pages/auth/register/register';
+import { ChangepwdComponent } from './pages/user/changepwd/changepwd';
+import { ProfileComponent } from './pages/user/profile/profile';
 
 const authGuard = () => {
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const isLoggedIn = localStorage.getItem('token') !== null ;
   if (!isLoggedIn) {
     return true; // 允许访问登录/注册
   }
@@ -18,7 +20,7 @@ const authGuard = () => {
 
 
 const mainGuard = () => {
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const isLoggedIn = localStorage.getItem('token') !== null ;
   if (!isLoggedIn) {
     const router = inject(Router);
     router.navigate(["/login"])
@@ -34,7 +36,17 @@ export const routes: Routes = [
   {
     path: '',
     component: LayoutComponent, 
-    canActivate: [mainGuard]
+    canActivate: [mainGuard],
+    children: [
+      {
+        path: "changePwd",
+        component: ChangepwdComponent
+      },
+      {
+        path: "profile",
+        component: ProfileComponent
+      }
+    ]
   },
   { path: '**', redirectTo: '' }
 ];

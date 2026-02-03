@@ -5,6 +5,8 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { AuthService } from '../../../core/services/auth.service';
+import { setUser } from '../../../core/stores/userstore';
 
 
 @Component({
@@ -27,7 +29,8 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.validateForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
@@ -39,15 +42,14 @@ export class LoginComponent {
   submitForm(): void {
     if (this.validateForm.valid) {
       const { username, password } = this.validateForm.value;
+
+      this.authService.login({username, password})
+        .subscribe(res => {
+          setUser(res.username, res.token, res.nickname)
+          this.authService.nickname = res.nickname;
+          this.router.navigate(['/']);
+        })
       
-      // 模拟登录（实际应调用 API）
-      if (username === 'admin' && password === '123456') {
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('username', username);
-        this.router.navigate(['/']);
-      } else {
-        this.errorMessage = '用户名或密码错误';
-      }
     } else {
       Object.values(this.validateForm.controls).forEach(control => {
         if (control.invalid) {

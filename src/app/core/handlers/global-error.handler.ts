@@ -29,19 +29,4 @@ export class GlobalErrorHandler implements ErrorHandler {
     // 4. 【可选】上报错误到监控系统（如 Sentry、自建日志）
     // this.reportErrorToServer(error);
   }
-
-  // 【可选】上报错误
-  // private reportErrorTo_server(error: any): void {
-  //   // 示例：发送到后端
-  //   fetch('/api/logs/error', {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify({
-  //       message: error.message,
-  //       stack: error.stack,
-  //       url: window.location.href,
-  //       timestamp: new Date().toISOString()
-  //     })
-  //   }).catch(() => {});
-  // }
 }

@@ -20,6 +20,18 @@
       </nz-form-item>
 
       <nz-form-item>
+        <nz-form-control nzErrorTip="请输入昵称">
+          <nz-input-group nzPrefixIcon="man">
+            <input
+              formControlName="nickname"
+              nz-input
+              placeholder="昵称"
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
         <nz-form-control nzErrorTip="请输入电子邮箱地址">
           <nz-input-group nzPrefixIcon="mail">
             <input
@@ -30,6 +42,8 @@
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
+
+      
 
       <nz-form-item>
         <nz-form-control nzErrorTip="请输入至少6位密码">
