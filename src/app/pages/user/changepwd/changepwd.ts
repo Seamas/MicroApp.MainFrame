@@ -1,11 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControlOptions, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControlOptions,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzButtonModule } from 'ng-zorro-antd/button'; 
+import { NzButtonModule } from 'ng-zorro-antd/button';
 import { CommonModule } from '@angular/common';
 
 import { catchError, finalize } from 'rxjs';
@@ -24,27 +30,29 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
     NzFormModule,
     NzInputModule,
     NzButtonModule,
-    NzAlertModule
-  ]
+    NzAlertModule,
+  ],
 })
 export class ChangepwdComponent implements OnInit {
   passwordForm!: FormGroup;
   loading = false;
   errorMessage: string | null = null;
 
-
   constructor(
     private fb: FormBuilder,
     private msg: NzMessageService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   ngOnInit() {
-    this.passwordForm = this.fb.group({
-      oldPassword: ['', [Validators.required]],
-      newPassword: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]]
-    }, { validators: this.confirmPasswordValidator.bind(this) } as AbstractControlOptions);
+    this.passwordForm = this.fb.group(
+      {
+        oldPassword: ['', [Validators.required]],
+        newPassword: ['', [Validators.required, Validators.minLength(6)]],
+        confirmPassword: ['', [Validators.required]],
+      },
+      { validators: this.confirmPasswordValidator.bind(this) } as AbstractControlOptions,
+    );
   }
 
   confirmPasswordValidator(control: AbstractControlOptions) {
@@ -61,20 +69,21 @@ export class ChangepwdComponent implements OnInit {
   onSubmit() {
     if (this.passwordForm.valid && !this.passwordMismatch) {
       this.loading = true;
-      
-      const {oldPassword, newPassword} = this.passwordForm.value;
-      this.authService.changePassword({oldPassword, newPassword})
+
+      const { oldPassword, newPassword } = this.passwordForm.value;
+      this.authService
+        .changePassword({ oldPassword, newPassword })
         .pipe(
           finalize(() => {
-            setTimeout(() => this.loading = false, 1000);
-          })
-          
-        ).subscribe( res => {
-            this.passwordForm.reset();
-            this.msg.success("修改密码成功", {
-            nzDuration: 3000
-          })
-        })
+            setTimeout(() => (this.loading = false), 1000);
+          }),
+        )
+        .subscribe((res) => {
+          this.passwordForm.reset();
+          this.msg.success('修改密码成功', {
+            nzDuration: 3000,
+          });
+        });
     }
   }
 }

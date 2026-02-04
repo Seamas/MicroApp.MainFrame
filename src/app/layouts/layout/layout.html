@@ -1,0 +1,54 @@
+<nz-layout class="whole-page">
+  <nz-sider [(nzCollapsed)]="isCollapsed">
+    <div class="logo">{{ appName }}</div>
+    <app-menu
+      [menus]="apps"
+      [isCollapsed]="isCollapsed"
+      (menuSelect)="onMenuSelect($event)"
+    ></app-menu>
+  </nz-sider>
+
+  <nz-layout>
+    <nz-header>
+      <div nz-dropdown [nzDropdownMenu]="userMenu" class="dropDown">
+        <!-- 头像 -->
+        <nz-avatar nzSize="small" [nzText]="authService.nickname"> </nz-avatar>
+
+        <!-- 用户名 -->
+        <span style="margin-right: 4px">{{ authService.nickname }}</span>
+
+        <!-- 下拉图标 -->
+        <span nz-icon nzType="down" nzTheme="outline"></span>
+      </div>
+
+      <!-- 下拉菜单 -->
+      <nz-dropdown-menu #userMenu="nzDropdownMenu">
+        <ul nz-menu>
+          <li nz-menu-item (click)="goToProfile()">
+            <span nz-icon nzType="user" nzTheme="outline"></span>
+            个人中心
+          </li>
+          <li nz-menu-item (click)="changePassword()">
+            <span nz-icon nzType="lock" nzTheme="outline"></span>
+            修改密码
+          </li>
+          <li nz-menu-divider></li>
+          <li nz-menu-item (click)="logout()" style="color: #ff4d4f">
+            <span nz-icon nzType="logout" nzTheme="outline"></span>
+            退出登录
+          </li>
+        </ul>
+      </nz-dropdown-menu>
+    </nz-header>
+    <nz-content style="margin: 24px; height: calc(100vh - 112px)">
+      <router-outlet></router-outlet>
+      <!-- @if (!isMicroapp) {
+
+        <router-outlet></router-outlet>
+
+      } @else {
+        <div #microapp></div>
+      } -->
+    </nz-content>
+  </nz-layout>
+</nz-layout>

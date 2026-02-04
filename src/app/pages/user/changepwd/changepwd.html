@@ -1,7 +1,5 @@
-
 @if (errorMessage) {
-        <nz-alert nzType="error" [nzMessage]="errorMessage" nzShowIcon></nz-alert>
-
+  <nz-alert nzType="error" [nzMessage]="errorMessage" nzShowIcon></nz-alert>
 }
 <nz-card nzTitle="修改密码" nzBordered>
   <form nz-form [formGroup]="passwordForm" (ngSubmit)="onSubmit()">
@@ -21,22 +19,26 @@
 
     <nz-form-item>
       <nz-form-label [nzSpan]="6" nzFor="confirmPassword" nzRequired>确认新密码</nz-form-label>
-      <nz-form-control 
-        [nzSpan]="14" 
+      <nz-form-control
+        [nzSpan]="14"
         nzErrorTip="两次输入的密码不一致"
-        [nzValidateStatus]="passwordForm.hasError('mismatch') ? 'error': ''"
-        >
+        [nzValidateStatus]="passwordForm.hasError('mismatch') ? 'error' : ''"
+      >
         <input nz-input type="password" formControlName="confirmPassword" />
       </nz-form-control>
     </nz-form-item>
 
     <nz-form-item>
       <nz-form-control>
-        <button nz-button nzType="primary" [nzLoading]="loading" [disabled]="passwordForm.invalid || passwordMismatch">
+        <button
+          nz-button
+          nzType="primary"
+          [nzLoading]="loading"
+          [disabled]="passwordForm.invalid || passwordMismatch"
+        >
           修改密码
         </button>
       </nz-form-control>
     </nz-form-item>
   </form>
 </nz-card>
-

@@ -6,19 +6,16 @@ import { throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { removeUserInfo } from '../stores/userstore';
 
-
-
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
   // 可选：添加默认 headers
-  const messageService = inject(NzMessageService)
+  const messageService = inject(NzMessageService);
   const clonedReq = req.clone({
     setHeaders: {
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+    },
   });
   return next(clonedReq).pipe(
-    map(event => {
-
+    map((event) => {
       // event.type 的含义
       // Sent = 0,                 // ✅ 请求已发送（刚发出）
       // UploadProgress = 1,       // 上传进度
@@ -60,9 +57,9 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
         errorMsg = error.message || `错误 ${error.status}`;
       }
       messageService.error(errorMsg, {
-        nzDuration: 3000
+        nzDuration: 3000,
       });
       return throwError(() => new Error(errorMsg));
-    })
+    }),
   );
 };

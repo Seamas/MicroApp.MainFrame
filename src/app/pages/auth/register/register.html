@@ -10,11 +10,7 @@
       <nz-form-item>
         <nz-form-control nzErrorTip="请输入至少3位用户名">
           <nz-input-group nzPrefixIcon="user">
-            <input
-              formControlName="username"
-              nz-input
-              placeholder="用户名"
-            />
+            <input formControlName="username" nz-input placeholder="用户名" />
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
@@ -22,11 +18,7 @@
       <nz-form-item>
         <nz-form-control nzErrorTip="请输入昵称">
           <nz-input-group nzPrefixIcon="man">
-            <input
-              formControlName="nickname"
-              nz-input
-              placeholder="昵称"
-            />
+            <input formControlName="nickname" nz-input placeholder="昵称" />
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
@@ -34,32 +26,21 @@
       <nz-form-item>
         <nz-form-control nzErrorTip="请输入电子邮箱地址">
           <nz-input-group nzPrefixIcon="mail">
-            <input
-              formControlName="email"
-              nz-input
-              placeholder="电子邮箱"
-            />
+            <input formControlName="email" nz-input placeholder="电子邮箱" />
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
-
-      
 
       <nz-form-item>
         <nz-form-control nzErrorTip="请输入至少6位密码">
           <nz-input-group nzPrefixIcon="lock">
-            <input
-              formControlName="password"
-              nz-input
-              type="password"
-              placeholder="密码"
-            />
+            <input formControlName="password" nz-input type="password" placeholder="密码" />
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
-        <nz-form-control 
+        <nz-form-control
           nzErrorTip="两次输入的密码不一致"
           [nzValidateStatus]="validateForm.hasError('mismatch') ? 'error' : ''"
         >
@@ -78,14 +59,12 @@
         nz-button
         nzType="primary"
         [disabled]="!validateForm.valid"
-        style="width: 100%; margin-top: 24px;"
+        style="width: 100%; margin-top: 24px"
       >
         注册
       </button>
 
-      <div class="footer">
-        已有账号？<a (click)="goToLogin()">立即登录</a>
-      </div>
+      <div class="footer">已有账号？<a (click)="goToLogin()">立即登录</a></div>
     </form>
   </div>
 </div>

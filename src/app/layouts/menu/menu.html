@@ -1,0 +1,26 @@
+<ul nz-menu [nzTheme]="theme" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+  @for (item of menus; track item.name) {
+    @if (item.children && item.children.length > 0) {
+      <li
+        nz-submenu
+        [nzTitle]="item.name"
+        [nzIcon]="getSubmenuIcon(item)"
+        (nzOpenChange)="toggleSubmenu(item, $event)"
+      >
+        <ul>
+          @for (child of item.children; track child.name) {
+            <li nz-menu-item (click)="selectItem(child)">
+              <i nz-icon [nzType]="child.icon"></i>
+              <span>{{ child.name }}</span>
+            </li>
+          }
+        </ul>
+      </li>
+    } @else {
+      <li nz-menu-item (click)="selectItem(item)">
+        <i nz-icon [nzType]="item.icon"></i>
+        <span>{{ item.name }}</span>
+      </li>
+    }
+  }
+</ul>

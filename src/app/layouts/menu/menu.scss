@@ -1,0 +1,5 @@
+@use '../../../styles/variables' as *;
+
+ul[nz-menu] {
+  border-right: none !important;
+}

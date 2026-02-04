@@ -1,1 +1,14 @@
-/* You can add global styles to this file, and also import other style files */
+// src/styles.scss
+
+// 自定义主色
+:root {
+  --ant-primary-color: #4096ee; // 主色
+  --ant-primary-color-hover: #5ca9f0; // hover
+  --ant-primary-color-active: #3585d9; // active
+  --ant-primary-color-outline: rgba(64, 150, 238, 0.2); // focus outline
+}
+
+// 可选：覆盖其他颜色
+// --ant-success-color: #52c41a;
+// --ant-error-color: #f56c6c;
+// --ant-warning-color: #faad14;

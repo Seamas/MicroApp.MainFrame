@@ -22,7 +22,7 @@ export class GlobalErrorHandler implements ErrorHandler {
     if (!errorMsg.includes('ResizeObserver loop limit exceeded')) {
       // 显示用户提示（使用 NG-ZORRO）
       this.message.error(errorMsg, {
-        nzDuration: 3000
+        nzDuration: 3000,
       });
     }
 

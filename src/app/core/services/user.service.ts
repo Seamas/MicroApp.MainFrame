@@ -1,0 +1,35 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of, delay, firstValueFrom } from 'rxjs';
+import { User } from '../models/requests/user.model';
+import { PageResultModel } from '../models/responses/page-result.model';
+import { QueryUser } from '../models/requests/query-user.model';
+
+@Injectable({ providedIn: 'root' })
+export class UserService {
+  constructor(private http: HttpClient) {}
+
+  getUser(id: number): Observable<User> {
+    return this.http.post<User>('/api/rbac/user/get', { id });
+  }
+
+  listUsers(query: QueryUser): Observable<PageResultModel<User>> {
+    return this.http.post<PageResultModel<User>>('/api/rbac/users/list', query);
+  }
+
+  createUser(user: User): Observable<boolean> {
+    return this.http.post<boolean>('/api/rbac/users/create', user);
+  }
+
+  enable(id: number, enabled: boolean): Observable<boolean> {
+    return this.http.post<boolean>('/api/rbac/users/enable', { id, enabled });
+  }
+
+  updateUser(id: number, nickname: string, email: string): Observable<boolean> {
+    return this.http.post<boolean>('/api/rbac/users/update', { id, nickname, email });
+  }
+
+  resetPassword(id: number): Observable<boolean> {
+    return this.http.post<boolean>('/api/rbac/users/reset-password', { id });
+  }
+}

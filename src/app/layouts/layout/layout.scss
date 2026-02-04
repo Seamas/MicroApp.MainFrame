@@ -1,3 +1,5 @@
+@use '../../../styles/variables' as *;
+
 :host {
   display: block;
   width: 100%;
@@ -14,21 +16,30 @@
 
 nz-sider {
   text-align: center;
-  color: #fff;
+  color: white;
   line-height: 120px;
+  background-color: $primary-dark;
 }
 
-hz-header, 
+hz-header,
 nz-footer {
   text-align: center;
   color: #fff;
 }
 
+nz-avatar {
+  background-color: #1890ff;
+  margin-right: 8px;
+}
 
 nz-header {
   height: 64px;
   padding-inline: 48px;
   line-height: 64px;
+  background: $bg-secondary;
+  padding: 0;
+  display: flex;
+  justify-content: flex-end;
 }
 
 nz-content {
@@ -36,4 +47,11 @@ nz-content {
   color: #fff;
   min-height: 120px;
   line-height: 120px;
+}
+
+.dropDown {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0 16px;
 }
