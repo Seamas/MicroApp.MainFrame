@@ -10,15 +10,15 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   getUser(id: number): Observable<User> {
-    return this.http.post<User>('/api/rbac/user/get', { id });
+    return this.http.post<User>('/api/rbac/users/get', { id });
   }
 
   listUsers(query: QueryUser): Observable<PageResultModel<User>> {
     return this.http.post<PageResultModel<User>>('/api/rbac/users/list', query);
   }
 
-  createUser(user: User): Observable<boolean> {
-    return this.http.post<boolean>('/api/rbac/users/create', user);
+  createUser(username: string, nickname: string, email: string): Observable<boolean> {
+    return this.http.post<boolean>('/api/rbac/users/create', {username, nickname, email});
   }
 
   enable(id: number, enabled: boolean): Observable<boolean> {

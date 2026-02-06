@@ -53,26 +53,24 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.profileForm.valid) {
       this.loading = true;
 
       const { nickname, email } = this.profileForm.value;
-      this.authService
-        .updateProfile({ nickname, email })
-        .pipe(finalize(() => setTimeout(() => (this.loading = false), 1000)))
-        .subscribe((res) => {
-          this.authService.nickname = res.nickname;
-          this.profileForm.patchValue({
-            username: res.username,
-            nickname: res.nickname,
-            email: res.email,
-          });
-
-          this.msg.success('修改用户信息成功', {
-            nzDuration: 3000,
-          });
+      try {
+        const res = await firstValueFrom(this.authService.updateProfile({ nickname, email }));
+        this.authService.nickname = res.nickname;
+        this.profileForm.patchValue({
+          username: res.username,
+          nickname: res.nickname,
+          email: res.email,
         });
+        this.msg.success('修改用户信息成功', {
+          nzDuration: 3000,
+        });
+      } catch (error) {}
+      this.loading = false;
     }
   }
 }

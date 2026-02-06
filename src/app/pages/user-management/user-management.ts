@@ -1,5 +1,5 @@
 // src/app/pages/user-management/user-management.component.ts
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -15,7 +15,7 @@ import { User } from '../../core/models/requests/user.model';
 import { UserService } from '../../core/services/user.service';
 import { UserEditFormComponent } from '../user-edit/user-edit';
 import { NzFormModule } from 'ng-zorro-antd/form';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, timeout } from 'rxjs';
 
 @Component({
   selector: 'app-user-management',
@@ -37,52 +37,74 @@ import { firstValueFrom } from 'rxjs';
 })
 export class UserManagementComponent implements OnInit {
   users: User[] = [];
-  loading = false;
 
   searchForm;
 
   pageIndex = 1;
   pageSize = 10;
-  total = 100;
+  total = 0;
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
     private msg: NzMessageService,
     private modal: NzModalService,
+    private cdr: ChangeDetectorRef,
   ) {
-    this.searchForm = this.fb.group({ keyword: [''] });
+    this.searchForm = this.fb.group({ username: [''], nickname: [''], email: [''] });
   }
 
-  async ngOnInit() {
-    await this.loadUsers();
+  ngOnInit() {
+    this.loadUsers(1, this.pageSize);
   }
 
-  async loadUsers() {
-    this.loading = true;
+  onPageIndexChanged(pageIndex: number) {
+    this.pageIndex = pageIndex;
+    this.loadUsers();
+  }
+
+  onPageSizeChanged(pageSize: number) {
+    this.pageSize = pageSize;
+    // 计算最大页码
+    const maxPage = Math.ceil(this.total / pageSize);
+    // 重新计算页码，并且至少要确保页码为1
+    this.pageIndex = Math.max(1, Math.min(this.pageIndex, maxPage));
+
+    this.loadUsers();
+  }
+
+  loadUsers(pageIndex?: number, pageSize?: number) {
+    this.userService
+      .listUsers({
+        pageIndex: pageIndex || this.pageIndex,
+        pageSize: pageSize || this.pageSize,
+        username: this.searchForm.get('username')?.value || '',
+        nickname: this.searchForm.get('nickname')?.value || '',
+        email: this.searchForm.get('email')?.value || '',
+      })
+      .subscribe((res) => {
+        this.total = res.totalCount;
+        this.users = res.items;
+
+        this.cdr.detectChanges();
+      });
+  }
+
+  async openUserModal(id?: number) {
+    let user: User | null = null;
     try {
-      const res = await firstValueFrom(
-        this.userService.listUsers({
-          pageIndex: 1,
-          pageSize: 10,
-          keyword: this.searchForm.get('keyword')?.value || '',
-        }),
-      );
-      this.pageIndex = res.pageIndex;
-      this.pageSize = res.pageSize;
-      this.total = res.totalCount;
-      this.users = res.items;
+      if (id) {
+        user = await firstValueFrom(this.userService.getUser(id));
+      }
     } catch (error) {
-      console.log(error);
+      this.msg.error('获取最新用户信息出错', { nzDuration: 3000 });
+      return;
     }
-    this.loading = false;
-  }
 
-  openUserModal(user?: User): void {
-    const form = this.createUserForm(user);
+    const title = user != null ? '编辑用户' : '新增用户';
 
     const modalRef = this.modal.create({
-      nzTitle: user != null ? '编辑用户' : '新增用户',
+      nzTitle: title,
       nzContent: UserEditFormComponent,
       nzData: { user: user || null },
       nzFooter: null,
@@ -92,28 +114,26 @@ export class UserManagementComponent implements OnInit {
 
     modalRef.afterClose.subscribe((result) => {
       if (result) {
+        this.msg.success(title + '成功!', { nzDuration: 3000 });
+        this.loadUsers();
       }
     });
   }
 
-  createUserForm(user?: User): FormGroup {
-    return this.fb.group({
-      username: [user?.username || '', [Validators.required, Validators.minLength(3)]],
-      nickname: [user?.nickname || '', [Validators.required]],
-      email: [user?.email || '', [Validators.required, Validators.email]],
-    });
-  }
-
-  async toggleStatus(user: User) {
+  async toggleStatus(newValue: boolean, user: User) {
+    const originalValue = user.isEnabled;
     try {
-      const res = await firstValueFrom(this.userService.enable(user.id, !user.isEnabled));
-      const message = user.isEnabled ? '用户禁用成功' : '用户启用成功';
-      user.isEnabled = !user.isEnabled;
-
+      const res = await firstValueFrom(this.userService.enable(user.id, newValue));
+      const message = newValue ? '用户启用成功' : '用户禁用成功';
+      user.isEnabled = newValue;
       this.msg.success(message, {
         nzDuration: 3000,
       });
-    } catch (error) {}
+    } catch (error) {
+      user.isEnabled = originalValue;
+      this.cdr.detectChanges();
+      this.msg.error('操作失败');
+    }
   }
 
   resetPassword(user: User): void {

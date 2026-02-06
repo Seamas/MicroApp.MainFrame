@@ -1,5 +1,7 @@
 export interface QueryUser {
   pageIndex: number;
   pageSize: number;
-  keyword: string;
+  username: string;
+  nickname: string;
+  email: string;
 }

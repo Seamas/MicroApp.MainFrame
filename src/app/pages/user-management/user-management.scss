@@ -1,7 +1,7 @@
 /* src/app/pages/user-management/user-management.component.scss */
 @use '../../../styles/variables' as *;
 
-.user-management-container {
+.outer-container {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -9,35 +9,21 @@
   padding: 20px;
   box-sizing: border-box;
 
-  .toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    margin-left: 20px;
-
-    h2 {
-      margin: 0;
-      font-size: 24px;
-      color: #1d1d1d;
-    }
-  }
-
   .search-bar {
     display: flex;
-    flex-wrap: wrap; // 允许换行
-    align-items: flex-end; // 按钮和输入框底部对齐
-    gap: 16px; // 项目间距（NG-ZORRO 默认间距）
-    padding: 20px 20px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px;
+    padding: 20px;
     background: #fff;
     border-radius: 4px;
     margin-bottom: 20px;
 
     .search-fields {
       display: flex;
-      flex-wrap: wrap; // 搜索项也允许换行
-      flex: 1; // 占据剩余空间（让按钮靠右）
-      min-width: 0; // 防止 flex 子项溢出
+      flex-wrap: wrap;
+      flex: 1;
+      min-width: 0;
       gap: 16px;
     }
 
@@ -46,7 +32,6 @@
       gap: 8px;
     }
 
-    // 表单项紧凑样式（可选）
     nz-form-item {
       margin: 0;
       display: flex;
@@ -61,7 +46,7 @@
       }
 
       nz-form-control {
-        width: 180px; // 可根据需求调整
+        width: 180px;
         margin: 0;
 
         input {
@@ -71,37 +56,91 @@
     }
   }
 
-  .table-container {
-    flex: 1;
-    min-height: 0; /* 关键：允许收缩 */
-    border-radius: 8px;
-    overflow: hidden;
+  .toolbar {
     display: flex;
-    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-left: 20px;
 
-    .ant-table {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-
-      .ant-table-container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .ant-table-content {
-        flex: 1;
-        overflow-y: auto;
-      }
+    h2 {
+      margin: 0;
+      font-size: 24px;
+      color: #1d1d1d;
     }
   }
 
+  /* 新增：表格和分页的包装器 */
+  .table-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .table-container {
+    flex: 1;
+    min-height: 0;
+    padding: 20px;
+    padding-bottom: 0; /* 让表格和分页有点间距 */
+  }
+
   .pagination-wrapper {
-    margin-top: 20px;
-    text-align: right;
-    padding-right: 20px;
+    padding: 20px;
+    border-top: 1px solid #f0f0f0;
+    background: #fff;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    min-height: 64px; /* 确保分页区域有固定高度 */
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+  }
+
+  button {
+    white-space: nowrap;
+  }
+}
+
+/* 可选：调整表格高度计算，根据实际布局微调 */
+::ng-deep {
+  .ant-table-wrapper {
+    height: 100%;
+
+    .ant-spin-nested-loading {
+      height: 100%;
+
+      .ant-spin-container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .ant-table {
+          flex: 1;
+
+          .ant-table-container {
+            height: 100%;
+
+            .ant-table-body {
+              max-height: calc(100vh - 440px) !important; /* 根据实际需要调整 */
+              overflow-y: auto !important;
+              overflow-x: hidden !important;
+            }
+          }
+        }
+      }
+    }
   }
 }
