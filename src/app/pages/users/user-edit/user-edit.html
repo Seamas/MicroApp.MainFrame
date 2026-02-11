@@ -1,22 +1,25 @@
 <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" class="edit-form">
   <nz-form-item>
     <nz-form-label [nzSpan]="6" nzFor="username" nzRequired>用户名</nz-form-label>
-    <nz-form-control [nzSpan]="14">
-      <input nz-input formControlName="username" />
+    <nz-form-control [nzSpan]="14" [nzErrorTip]="getUsernameErrorTip()" nzHasFeedback [nzValidateStatus]="usernameControl">
+      <input nz-input formControlName="username" placeholder="请输入用户名" />
+      @if(validatingUsername) {
+        <nz-spin nzSize="small" nzTip="正在校验用户名"></nz-spin>
+      }
     </nz-form-control>
   </nz-form-item>
 
   <nz-form-item>
     <nz-form-label [nzSpan]="6" nzFor="nickname" nzRequired>昵称</nz-form-label>
     <nz-form-control [nzSpan]="14" nzErrorTip="请输入昵称">
-      <input nz-input formControlName="nickname" />
+      <input nz-input formControlName="nickname" placeholder="请输入昵称"/>
     </nz-form-control>
   </nz-form-item>
 
   <nz-form-item>
     <nz-form-label [nzSpan]="6" nzFor="email" nzRequired>电子邮箱</nz-form-label>
     <nz-form-control [nzSpan]="14" nzErrorTip="请输入有效的邮箱地址">
-      <input nz-input type="email" formControlName="email" />
+      <input nz-input type="email" formControlName="email" placeholder="请输入电子邮箱地址"/>
     </nz-form-control>
   </nz-form-item>
 

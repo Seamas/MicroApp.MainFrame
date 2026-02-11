@@ -8,34 +8,29 @@
 
     <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
       <nz-form-item>
-        <nz-form-control nzErrorTip="请输入至少3位用户名">
-          <nz-input-group nzPrefixIcon="user">
-            <input formControlName="username" nz-input placeholder="用户名" />
-          </nz-input-group>
+        <nz-form-control [nzErrorTip]="getUsernameErrorTip()" nzHasFeedback [nzValidateStatus]="usernameControl">
+            <input nz-icon="user" formControlName="username" nz-input placeholder="用户名" />
+            @if(validatingUsername) {
+              <nz-spin nzSize="small" nzTip="正在校验用户名"></nz-spin>
+            }
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
         <nz-form-control nzErrorTip="请输入昵称">
-          <nz-input-group nzPrefixIcon="man">
-            <input formControlName="nickname" nz-input placeholder="昵称" />
-          </nz-input-group>
+            <input nz-icon="man" formControlName="nickname" nz-input placeholder="昵称" />
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
         <nz-form-control nzErrorTip="请输入电子邮箱地址">
-          <nz-input-group nzPrefixIcon="mail">
-            <input formControlName="email" nz-input placeholder="电子邮箱" />
-          </nz-input-group>
+            <input nz-icon="mail" formControlName="email" nz-input placeholder="电子邮箱" />
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
         <nz-form-control nzErrorTip="请输入至少6位密码">
-          <nz-input-group nzPrefixIcon="lock">
-            <input formControlName="password" nz-input type="password" placeholder="密码" />
-          </nz-input-group>
+            <input nz-icon="lock" formControlName="password" nz-input type="password" placeholder="密码" />
         </nz-form-control>
       </nz-form-item>
 
@@ -44,14 +39,13 @@
           nzErrorTip="两次输入的密码不一致"
           [nzValidateStatus]="validateForm.hasError('mismatch') ? 'error' : ''"
         >
-          <nz-input-group nzPrefixIcon="lock">
             <input
+            nz-icon="lock"
               formControlName="confirmPassword"
               nz-input
               type="password"
               placeholder="确认密码"
             />
-          </nz-input-group>
         </nz-form-control>
       </nz-form-item>
 
@@ -59,7 +53,8 @@
         nz-button
         nzType="primary"
         [disabled]="!validateForm.valid"
-        style="width: 100%; margin-top: 24px"
+        class="register-button"
+        type="submit"
       >
         注册
       </button>

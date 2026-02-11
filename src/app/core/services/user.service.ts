@@ -14,11 +14,11 @@ export class UserService {
   }
 
   listUsers(query: QueryUser): Observable<PageResultModel<User>> {
-    return this.http.post<PageResultModel<User>>('/api/rbac/users/list', query);
+    return this.http.post<PageResultModel<User>>('/api/rbac/users/search', query);
   }
 
   createUser(username: string, nickname: string, email: string): Observable<boolean> {
-    return this.http.post<boolean>('/api/rbac/users/create', {username, nickname, email});
+    return this.http.post<boolean>('/api/rbac/users/create', { username, nickname, email });
   }
 
   enable(id: number, enabled: boolean): Observable<boolean> {
@@ -31,5 +31,9 @@ export class UserService {
 
   resetPassword(id: number): Observable<boolean> {
     return this.http.post<boolean>('/api/rbac/users/reset-password', { id });
+  }
+
+  checkUsername(username: string, id?: number): Observable<boolean> {
+    return this.http.post<boolean>('/api/rbac/users/check-username', { id, username });
   }
 }

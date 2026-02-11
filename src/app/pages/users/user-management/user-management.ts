@@ -1,8 +1,8 @@
 // src/app/pages/user-management/user-management.component.ts
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -10,12 +10,13 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
-
-import { User } from '../../core/models/requests/user.model';
-import { UserService } from '../../core/services/user.service';
-import { UserEditFormComponent } from '../user-edit/user-edit';
 import { NzFormModule } from 'ng-zorro-antd/form';
-import { firstValueFrom, timeout } from 'rxjs';
+
+import { User } from '../../../core/models/requests/user.model';
+import { UserService } from '../../../core/services/user.service';
+import { UserEditFormComponent } from '../user-edit/user-edit';
+
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-user-management',
