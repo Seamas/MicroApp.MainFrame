@@ -1,4 +1,4 @@
-import { Routes, Router } from '@angular/router';
+import { Routes, Router, UrlTree } from '@angular/router';
 import { inject } from '@angular/core';
 
 import { LoginComponent } from './pages/auth/login/login';
@@ -6,25 +6,24 @@ import { LayoutComponent } from './layouts/layout/layout';
 import { RegisterComponent } from './pages/auth/register/register';
 import { ChangepwdComponent } from './pages/user/changepwd/changepwd';
 import { ProfileComponent } from './pages/user/profile/profile';
-import { UserManagementComponent } from './pages/user-management/user-management';
 
-const authGuard = () => {
+const authGuard = (): boolean | UrlTree => {
   const isLoggedIn = localStorage.getItem('token') !== null;
-  if (!isLoggedIn) {
-    return true; // 允许访问登录/注册
-  }
-  // 已登录用户重定向到主页
   const router = inject(Router);
-  router.navigate(['/']);
-  return false;
+
+  if (isLoggedIn) {
+    // 已登录用户不能访问登录/注册页，重定向到主页
+    return router.parseUrl('/');
+  }
+
+  return true;
 };
 
-const mainGuard = () => {
+const mainGuard = (): boolean | UrlTree => {
   const isLoggedIn = localStorage.getItem('token') !== null;
+  const router = inject(Router);
   if (!isLoggedIn) {
-    const router = inject(Router);
-    router.navigate(['/login']);
-    return false;
+    return router.parseUrl('/login');
   }
   return true;
 };
@@ -48,7 +47,14 @@ export const routes: Routes = [
       {
         path: 'users',
         loadComponent: () =>
-          import('./pages/user-management/user-management').then((m) => m.UserManagementComponent),
+          import('./pages/users/user-management/user-management').then(
+            (m) => m.UserManagementComponent,
+          ),
+      },
+      {
+        path: 'roles',
+        loadComponent: () =>
+          import('./pages/roles/role-management/role-management').then((m) => m.RoleManagement),
       },
     ],
   },
