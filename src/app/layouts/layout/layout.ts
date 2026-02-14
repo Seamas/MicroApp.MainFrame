@@ -62,7 +62,7 @@ export class LayoutComponent implements AfterViewInit, OnDestroy, OnInit {
         { type: 'route', name: '用户列表', icon: 'user', url: '/users' },
         { type: 'route', name: '角色管理', icon: 'team', url: '/roles' },
         { type: 'route', name: '菜单管理', icon: 'menu', url: '/menus' },
-        { type: 'route', name: '接口管理', icon: 'api', url: '/apis' },
+        { type: 'route', name: '接口管理', icon: 'api', url: '/endpoints' },
       ],
     },
   ];

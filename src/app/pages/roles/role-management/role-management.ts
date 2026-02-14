@@ -35,7 +35,7 @@ import { firstValueFrom } from 'rxjs';
   templateUrl: './role-management.html',
   styleUrl: './role-management.scss',
 })
-export class RoleManagement implements OnInit {
+export class RoleManagementComponent implements OnInit {
   roles: Role[] = [];
 
   searchForm;

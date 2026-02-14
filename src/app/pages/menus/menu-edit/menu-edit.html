@@ -1,0 +1,65 @@
+<form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" class="edit-form">
+
+    <nz-form-item>
+    <nz-form-label [nzSpan]="6" nzFor="name" nzRequired>菜单名称</nz-form-label>
+    <nz-form-control [nzSpan]="14" [nzErrorTip]="nameErrorTip()">
+      <input nz-input formControlName="name" placeholder="请输入菜单名称"/>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzFor="code" nzRequired>菜单类型</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-select formControlName="code" placeholder="请选择菜单类型">
+            @for (menucode of menuCodeTypes; track menucode.code) {
+              <nz-option [nzValue]="menucode.code" [nzLabel]="menucode.name"></nz-option>
+            }
+
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzSpan]="6" nzFor="path">菜单路径</nz-form-label>
+    <nz-form-control [nzSpan]="14">
+      <input nz-input formControlName="path" placeholder="请输入菜单路径"/>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzFor="parentId" nzRequired>上级菜单</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-select formControlName="parentId" placeholder="请选择上级菜单">
+            @for (parent of parentMenus; track parent.id) {
+              <nz-option [nzValue]="parent.id" [nzLabel]="parent.name"></nz-option>
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+    <nz-form-label [nzSpan]="6" nzFor="sortOrder" nzRequired>排序号</nz-form-label>
+    <nz-form-control [nzSpan]="14">
+      <input nz-input formControlName="sortOrder" placeholder="请输入排序号"/>
+      <div class="form-hint">
+        请输入数字
+      </div>
+    </nz-form-control>
+  </nz-form-item>
+  
+
+  <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzFor="isEnabled" nzRequired>菜单状态</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-select formControlName="isEnabled" placeholder="请选择菜单状态">
+            <nz-option [nzValue]="true" nzLabel="启用"></nz-option>
+            <nz-option [nzValue]="false" nzLabel="禁用"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+  <div class="form-actions">
+    <button nz-button type="button" (click)="cancel()">取消</button>
+    <button nz-button nzType="primary" [disabled]="form.invalid || form.pending" [nzLoading]="form.pending" type="submit">保存</button>
+  </div>
+</form>

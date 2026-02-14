@@ -31,6 +31,7 @@ import {
   switchMap,
 } from 'rxjs';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { FormErrorService } from '../../../core/services/form-error.service';
 
 @Component({
   selector: 'app-role-edit',
@@ -59,6 +60,7 @@ export class RoleEditComponent implements OnInit {
     private fb: FormBuilder,
     private roleService: RoleService,
     private msg: NzMessageService,
+    private formErrorService: FormErrorService,
   ) {
     this.form = this.fb.group({
       name: [
@@ -121,7 +123,7 @@ export class RoleEditComponent implements OnInit {
         distinctUntilChanged(),
         switchMap((codeValue) => {
           return this.roleService.checkCode(codeValue, this.id).pipe(
-            map((isUnique) => (isUnique ? null : { codeNotUnique: true })),
+            map((isUnique) => (isUnique ? null : { alreadyExists: true })),
             catchError(() => of(null)),
           );
         }),
@@ -187,7 +189,7 @@ export class RoleEditComponent implements OnInit {
         this.msg.error('角色编码不能超过30个字符');
       } else if (codeControl.errors['pattern']) {
         this.msg.error('角色编码只能包含字母、数字、下划线和短横线');
-      } else if (codeControl.errors['codeNotUnique']) {
+      } else if (codeControl.errors['alreadyExists']) {
         this.msg.error('角色编码已存在，请使用其他编码');
       }
     } else if (nameControl?.errors) {
@@ -204,20 +206,7 @@ export class RoleEditComponent implements OnInit {
   // 获取错误提示信息（用于模板）
   getCodeErrorTip(): string {
     const control = this.form.get('code');
-    if (control?.errors) {
-      if (control.errors['required']) {
-        return '请输入角色编码';
-      } else if (control.errors['minlength']) {
-        return '角色编码至少需要2个字符';
-      } else if (control.errors['maxlength']) {
-        return '角色编码不能超过30个字符';
-      } else if (control.errors['pattern']) {
-        return '只能包含字母、数字、下划线和短横线';
-      } else if (control.errors['codeNotUnique']) {
-        return '角色编码已存在';
-      }
-    }
-    return '';
+    return this.formErrorService.getErrorTip(control!, '角色编码');
   }
 
   get codeControl(): AbstractControl {

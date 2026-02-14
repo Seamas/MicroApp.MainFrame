@@ -130,7 +130,7 @@ export class UserEditFormComponent {
       return '用户名不能超过20个字符';
     } else if (usernameControl?.hasError('pattern')) {
       return '用户名只能包含字母、数字和下划线';
-    } else if (usernameControl?.hasError('notUnique')) {
+    } else if (usernameControl?.hasError('alreadyExists')) {
       return '用户名已存在';
     }
     return '';
@@ -151,7 +151,7 @@ export class UserEditFormComponent {
         distinctUntilChanged(),
         switchMap((name) =>
           this.userService.checkUsername(name).pipe(
-            map((isUnique) => (isUnique ? null : { notUnique: true })),
+            map((isUnique) => (isUnique ? null : { alreadyExists: true })),
             catchError(() => of(null)),
           ),
         ),

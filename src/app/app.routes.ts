@@ -54,7 +54,23 @@ export const routes: Routes = [
       {
         path: 'roles',
         loadComponent: () =>
-          import('./pages/roles/role-management/role-management').then((m) => m.RoleManagement),
+          import('./pages/roles/role-management/role-management').then(
+            (m) => m.RoleManagementComponent,
+          ),
+      },
+      {
+        path: 'menus',
+        loadComponent: () =>
+          import('./pages/menus/menu-management/menu-management').then(
+            (m) => m.MenuManagementComponent,
+          ),
+      },
+      {
+        path: 'endpoints',
+        loadComponent: () =>
+          import('./pages/endpoints/api-management/api-management').then(
+            (m) => m.ApiManagementComponent,
+          ),
       },
     ],
   },
