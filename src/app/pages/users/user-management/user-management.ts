@@ -124,7 +124,12 @@ export class UserManagementComponent implements OnInit {
   async toggleStatus(newValue: boolean, user: User) {
     const originalValue = user.isEnabled;
     try {
-      const res = await firstValueFrom(this.userService.enable(user.id, newValue));
+      let res: boolean = false;
+      if (newValue) {
+        res = await firstValueFrom(this.userService.enable(user.id));
+      } else {
+        res = await firstValueFrom(this.userService.disable(user.id));
+      }
       const message = newValue ? '用户启用成功' : '用户禁用成功';
       user.isEnabled = newValue;
       this.msg.success(message, {
@@ -132,9 +137,9 @@ export class UserManagementComponent implements OnInit {
       });
     } catch (error) {
       user.isEnabled = originalValue;
-      this.cdr.detectChanges();
       this.msg.error('操作失败');
     }
+    this.cdr.detectChanges();
   }
 
   resetPassword(user: User): void {

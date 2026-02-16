@@ -22,15 +22,7 @@
   </nz-form-item>
 
 
-  <nz-form-item>
-        <nz-form-label [nzSpan]="6" nzFor="isEnabled" nzRequired>接口状态</nz-form-label>
-        <nz-form-control [nzSpan]="14">
-          <nz-select formControlName="isEnabled" placeholder="请选择接口状态">
-            <nz-option [nzValue]="true" nzLabel="启用"></nz-option>
-            <nz-option [nzValue]="false" nzLabel="禁用"></nz-option>
-          </nz-select>
-        </nz-form-control>
-      </nz-form-item>
+
 
   <div class="form-actions">
     <button nz-button type="button" (click)="cancel()">取消</button>

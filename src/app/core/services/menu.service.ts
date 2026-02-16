@@ -5,6 +5,15 @@ import { PageResultModel } from '../models/responses/page-result.model';
 import { Observable } from 'rxjs';
 import { QueryMenuModel } from '../models/requests/query-menu.model';
 
+interface MenuDto {
+  id?: number;
+  name: string;
+  code: string;
+  path?: string;
+  parentId?: number;
+  sortOrder: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MenuService {
   constructor(private http: HttpClient) {}
@@ -21,11 +30,11 @@ export class MenuService {
     return this.http.post<PageResultModel<Menu>>('/api/rbac/menus/search', param);
   }
 
-  createMenu(menu: Menu): Observable<boolean> {
+  createMenu(menu: MenuDto): Observable<boolean> {
     return this.http.post<boolean>('/api/rbac/menus/create', menu);
   }
 
-  updateMenu(menu: Menu): Observable<boolean> {
+  updateMenu(menu: MenuDto): Observable<boolean> {
     return this.http.post<boolean>('/api/rbac/menus/update', menu);
   }
 
@@ -33,7 +42,12 @@ export class MenuService {
     return this.http.get<Menu[]>('/api/rbac/menus/first-level');
   }
 
-  enable(id: number, enabled: boolean): Observable<boolean> {
-    return this.http.post<boolean>('/api/rbac/menus/enable', { id, enabled });
+  enable(id: number): Observable<boolean> {
+    return this.http.post<boolean>('/api/rbac/menus/enable', { id });
+  }
+
+
+  disable(id: number): Observable<boolean> {
+    return this.http.post<boolean>('/api/rbac/menus/disable', { id });
   }
 }

@@ -21,8 +21,12 @@ export class UserService {
     return this.http.post<boolean>('/api/rbac/users/create', { username, nickname, email });
   }
 
-  enable(id: number, enabled: boolean): Observable<boolean> {
-    return this.http.post<boolean>('/api/rbac/users/enable', { id, enabled });
+  enable(id: number): Observable<boolean> {
+    return this.http.post<boolean>('/api/rbac/users/enable', { id });
+  }
+
+  disable(id: number): Observable<boolean> {
+    return this.http.post<boolean>('/api/rbac/users/disable', { id });
   }
 
   updateUser(id: number, nickname: string, email: string): Observable<boolean> {

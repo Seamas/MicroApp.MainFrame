@@ -16,7 +16,13 @@ interface CreateApiEndpointRequest {
   url: string;
   apiGroup: string;
   description: string;
-  isEnabled: boolean;
+}
+
+interface UpdateApiEndpointRequest {
+  id: number;
+  url: string;
+  apiGroup: string;
+  description: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -39,12 +45,16 @@ export class ApiEndpointService {
     return this.http.post<boolean>(`/api/rbac/endpoints/create`, endpoint);
   }
 
-  updateApiEndpoint(endpoint: ApiEndpoint): Observable<boolean> {
+  updateApiEndpoint(endpoint: UpdateApiEndpointRequest): Observable<boolean> {
     return this.http.post<boolean>(`/api/rbac/endpoints/update`, endpoint);
   }
 
-  enableApiEndpoint(id: number, enabled: boolean): Observable<boolean> {
-    return this.http.post<boolean>(`/api/rbac/endpoints/enable`, { id, enabled });
+  enableApiEndpoint(id: number): Observable<boolean> {
+    return this.http.post<boolean>(`/api/rbac/endpoints/enable`, { id });
+  }
+
+  disableApiEndpoint(id: number): Observable<boolean> {
+    return this.http.post<boolean>(`/api/rbac/endpoints/disable`, { id });
   }
 
   initApiEndpoints(): Observable<boolean> {

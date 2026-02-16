@@ -30,8 +30,12 @@ export class RoleService {
     return this.http.post<boolean>('/api/rbac/roles/update', { id, name, code });
   }
 
-  enable(id: number, enabled: boolean): Observable<boolean> {
-    return this.http.post<boolean>('/api/rbac/roles/enable', { id, enabled });
+  enable(id: number): Observable<boolean> {
+    return this.http.post<boolean>('/api/rbac/roles/enable', { id });
+  }
+
+    disable(id: number): Observable<boolean> {
+    return this.http.post<boolean>('/api/rbac/roles/disable', { id });
   }
 
   delete(id: number): Observable<boolean> {

@@ -61,10 +61,6 @@ export class ApiEditComponent implements OnInit {
       ],
       apiGroup: [data?.endpoint?.apiGroup || ''],
       description: [data?.endpoint?.description || ''],
-      isEnabled: [
-        data?.endpoint?.isEnabled !== undefined ? data.endpoint.isEnabled : true,
-        { validators: [Validators.required] },
-      ],
     });
     this.isEdit = !!data.endpoint;
     this.id = data?.endpoint?.id || 0;
@@ -78,7 +74,7 @@ export class ApiEditComponent implements OnInit {
 
     if (this.form.valid) {
       try {
-        const { url, apiGroup, description, isEnabled } = this.form.value;
+        const { url, apiGroup, description } = this.form.value;
         let res: boolean = false;
         if (this.isEdit) {
           res = await firstValueFrom(
@@ -87,12 +83,11 @@ export class ApiEditComponent implements OnInit {
               url,
               apiGroup,
               description,
-              isEnabled,
             }),
           );
         } else {
           res = await firstValueFrom(
-            this.endpointService.createApiEndpoint({ url, apiGroup, description, isEnabled }),
+            this.endpointService.createApiEndpoint({ url, apiGroup, description }),
           );
         }
         if (res) {

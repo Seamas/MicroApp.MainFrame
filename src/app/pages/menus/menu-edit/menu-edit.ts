@@ -90,10 +90,6 @@ export class MenuEditComponent implements OnInit {
         data?.menu?.sortOrder || 0,
         { validators: [Validators.required, Validators.min(0)] },
       ],
-      isEnabled: [
-        data?.menu?.isEnabled !== undefined ? data.menu.isEnabled : true,
-        { validators: [Validators.required] },
-      ],
     });
     this.isEdit = !!data.menu;
     this.id = data?.menu?.id || 0;
@@ -137,7 +133,7 @@ export class MenuEditComponent implements OnInit {
 
     if (this.form.valid) {
       try {
-        const { name, code, path, parentId, sortOrder, isEnabled } = this.form.value;
+        const { name, code, path, parentId, sortOrder } = this.form.value;
         let res: boolean = false;
         if (this.isEdit) {
           res = await firstValueFrom(
@@ -148,12 +144,11 @@ export class MenuEditComponent implements OnInit {
               path,
               parentId,
               sortOrder,
-              isEnabled,
             }),
           );
         } else {
           res = await firstValueFrom(
-            this.menuService.createMenu({ name, code, path, parentId, sortOrder, isEnabled }),
+            this.menuService.createMenu({ name, code, path, parentId, sortOrder }),
           );
         }
         if (res) {

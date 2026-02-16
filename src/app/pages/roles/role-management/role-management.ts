@@ -123,7 +123,12 @@ export class RoleManagementComponent implements OnInit {
   async toggleStatus(newValue: boolean, role: Role) {
     const originalValue = role.isEnabled;
     try {
-      const res = await firstValueFrom(this.roleService.enable(role.id, newValue));
+      let res: boolean = false;
+      if (newValue) {
+        res = await firstValueFrom(this.roleService.enable(role.id));
+      } else {
+        res = await firstValueFrom(this.roleService.disable(role.id));
+      }
       const message = newValue ? '角色启用成功' : '角色禁用成功';
       role.isEnabled = newValue;
       this.message.success(message, {
@@ -131,9 +136,9 @@ export class RoleManagementComponent implements OnInit {
       });
     } catch (error) {
       role.isEnabled = originalValue;
-      this.cdr.detectChanges();
       this.message.error('操作失败');
     }
+    this.cdr.detectChanges();
   }
 
   deleteRole(role: Role): void {

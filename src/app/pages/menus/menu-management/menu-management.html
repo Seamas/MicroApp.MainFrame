@@ -13,8 +13,9 @@
         <nz-form-label nzFor="code">菜单类型</nz-form-label>
         <nz-form-control>
           <nz-select formControlName="code" placeholder="请选择菜单类型" nzAllowClear>
-            <nz-option [nzValue]="'router'" nzLabel="本地应用"></nz-option>
-            <nz-option [nzValue]="'microapp'" nzLabel="微应用"></nz-option>
+            @for ( item of menuCodeTypes; track item.value) {
+               <nz-option [nzValue]="item.value" [nzLabel]="item.label"></nz-option>
+            }
           </nz-select>
         </nz-form-control>
       </nz-form-item>

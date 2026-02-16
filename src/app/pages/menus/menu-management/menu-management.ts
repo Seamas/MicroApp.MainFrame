@@ -43,6 +43,12 @@ export class MenuManagementComponent implements OnInit {
 
   searchForm;
 
+  menuCodeTypes = [
+    { label: '管理节点', value: 'link' },
+    { label: '本地应用', value: 'router' },
+    { label: '微应用', value: 'microapp' },
+  ];
+
   menuCodeMap: Record<'link' | 'router' | 'microapp', string> = {
     link: '管理节点',
     router: '本地应用',
@@ -146,7 +152,12 @@ export class MenuManagementComponent implements OnInit {
   async toggleStatus(newValue: boolean, menu: Menu) {
     const originalValue = menu.isEnabled;
     try {
-      const res = await firstValueFrom(this.menuService.enable(menu.id!, newValue));
+      let res: boolean = false;
+      if (newValue) {
+        res = await firstValueFrom(this.menuService.enable(menu.id!));
+      } else {
+        res = await firstValueFrom(this.menuService.disable(menu.id!));
+      }
       const message = newValue ? '菜单启用成功' : '菜单禁用成功';
       menu.isEnabled = newValue;
       this.msg.success(message, {
@@ -154,9 +165,9 @@ export class MenuManagementComponent implements OnInit {
       });
     } catch (error) {
       menu.isEnabled = originalValue;
-      this.cdr.detectChanges();
       this.msg.error('操作失败');
     }
+    this.cdr.detectChanges();
   }
 
   deleteMenu(menu: Menu) {

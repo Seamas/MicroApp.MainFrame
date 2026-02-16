@@ -111,7 +111,7 @@ export class ApiManagementComponent implements OnInit {
       return;
     }
 
-    const title = data != null ? '编辑菜单' : '新增菜单';
+    const title = data != null ? '编辑API端点' : '新增API端点';
 
     const modalRef = this.modal.create({
       nzTitle: title,
@@ -133,7 +133,12 @@ export class ApiManagementComponent implements OnInit {
   async toggleStatus(newValue: boolean, menu: ApiEndpoint) {
     const originalValue = menu.isEnabled;
     try {
-      const res = await firstValueFrom(this.endpointService.enableApiEndpoint(menu.id!, newValue));
+      let res: boolean = false;
+      if (newValue) {
+        res = await firstValueFrom(this.endpointService.enableApiEndpoint(menu.id!));
+      } else {
+        res = await firstValueFrom(this.endpointService.disableApiEndpoint(menu.id!));
+      }
       const message = newValue ? 'API端点启用成功' : 'API端点禁用成功';
       menu.isEnabled = newValue;
       this.msg.success(message, {
@@ -141,9 +146,10 @@ export class ApiManagementComponent implements OnInit {
       });
     } catch (error) {
       menu.isEnabled = originalValue;
-      this.cdr.detectChanges();
+
       this.msg.error('操作失败');
     }
+    this.cdr.detectChanges();
   }
 
   deleteApiEndpoint(menu: ApiEndpoint) {
