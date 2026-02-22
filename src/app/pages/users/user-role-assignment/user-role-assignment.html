@@ -1,0 +1,127 @@
+<nz-spin [nzSpinning]="loading">
+    <!-- 顶部工具栏 -->
+  <div class="assignment-toolbar">
+    <button nz-button nzType="primary" (click)="save()">保存</button>
+  </div>
+
+
+  <div class="role-transfer">
+    <!-- 左侧：所有角色 -->
+    <div class="transfer-panel">
+      <div class="panel-header">
+        <h4>所有角色 ({{ allRoles.length }})</h4>
+        <nz-input-group [nzSuffix]="suffixSearch">
+          <input
+            type="text"
+            nz-input
+            placeholder="搜索角色"
+            [(ngModel)]="searchAll"
+            (ngModelChange)="applyAllSearch()"
+          />
+        </nz-input-group>
+        <ng-template #suffixSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+      <nz-list
+        [nzDataSource]="filteredAllRoles"
+        [nzRenderItem]="item1"
+        [nzItemLayout]="'horizontal'"
+        [nzSize]="'small'"
+        [nzLoading]="loading"
+        [nzNoResult]="'无匹配角色'"
+      >
+        <ng-template #item1 let-role>
+          <nz-list-item
+            [class.selected]="selectedAllRoleIds.has(role.id)"
+            (click)="leftRoleClick(role.id)"
+          >
+            <nz-list-item-meta
+              [nzTitle]="role.name"
+              [nzDescription]="role.code ? '代码: ' + role.code : ''"
+            ></nz-list-item-meta>
+          </nz-list-item>
+        </ng-template>
+      </nz-list>
+    </div>
+
+    <!-- 中间操作按钮 -->
+    <div class="transfer-operations">
+      <button
+        nz-button
+        nzType="default"
+        [disabled]="selectedAllRoleIds.size === 0"
+        (click)="addSelectedRoles()"
+        title="添加选中角色"
+      >
+        &gt;
+      </button>
+      <button
+        nz-button
+        nzType="default"
+        [disabled]="filteredAllRoles.length === 0"
+        (click)="addAllRoles()"
+        title="添加全部角色"
+      >
+        &gt;&gt;
+      </button>
+      <button
+        nz-button
+        nzType="default"
+        [disabled]="selectedAssignedRoleIds.size === 0"
+        (click)="removeSelectedRoles()"
+        title="移除选中角色"
+      >
+        &lt;
+      </button>
+      <button
+        nz-button
+        nzType="default"
+        [disabled]="assignedRoles.length === 0"
+        (click)="removeAllRoles()"
+        title="移除全部角色"
+      >
+        &lt;&lt;
+      </button>
+    </div>
+
+    <!-- 右侧：已分配角色 -->
+    <div class="transfer-panel">
+      <div class="panel-header">
+        <h4>已分配角色 ({{ assignedRoles.length }})</h4>
+        <nz-input-group [nzSuffix]="suffixSearch2">
+          <input
+            type="text"
+            nz-input
+            placeholder="搜索已分配角色"
+            [(ngModel)]="searchAssigned"
+            (ngModelChange)="applyAssignedSearch()"
+          />
+        </nz-input-group>
+        <ng-template #suffixSearch2>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+      <nz-list
+        [nzDataSource]="filteredAssignedRoles"
+        [nzRenderItem]="item2"
+        [nzItemLayout]="'horizontal'"
+        [nzSize]="'small'"
+        [nzLoading]="loading"
+        [nzNoResult]="'无已分配角色'"
+      >
+        <ng-template #item2 let-role>
+          <nz-list-item
+            [class.selected]="selectedAssignedRoleIds.has(role.id)"
+            (click)="rightRoleClick(role.id)"
+          >
+            <nz-list-item-meta
+              [nzTitle]="role.name"
+              [nzDescription]="role.code ? '代码: ' + role.code : ''"
+            ></nz-list-item-meta>
+          </nz-list-item>
+        </ng-template>
+      </nz-list>
+    </div>
+  </div>
+</nz-spin>

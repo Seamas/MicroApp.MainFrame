@@ -7,6 +7,7 @@ import {
   OnDestroy,
   Renderer2,
   OnInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -17,9 +18,11 @@ import { AuthService } from '../../core/services/auth.service';
 
 import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
 import { finalize, firstValueFrom } from 'rxjs';
-import { Menu } from '../menu.mode';
+import { MenuDto } from '../../core/models/menu-dto.mode';
 
 import { MenuComponent } from '../menu/menu';
+import { PermissionService } from '../../core/services/permission.service';
+import { Menu } from '../../core/models/requests/menu.model';
 
 @Component({
   selector: 'app-layout',
@@ -47,40 +50,65 @@ export class LayoutComponent implements AfterViewInit, OnDestroy, OnInit {
   appName: string = '';
   isMicroapp: boolean = false;
 
-  apps: Menu[] = [
-    {
-      type: 'dashboard',
-      name: '仪表盘',
-      icon: 'dashboard',
-      url: '/',
-    },
-    {
-      type: 'user',
-      name: '系统管理',
-      icon: 'user',
-      children: [
-        { type: 'route', name: '用户列表', icon: 'user', url: '/users' },
-        { type: 'route', name: '角色管理', icon: 'team', url: '/roles' },
-        { type: 'route', name: '菜单管理', icon: 'menu', url: '/menus' },
-        { type: 'route', name: '接口管理', icon: 'api', url: '/endpoints' },
-      ],
-    },
-  ];
+  menus: MenuDto[] = [];
 
   constructor(
     private router: Router,
     private renderer: Renderer2,
     public authService: AuthService,
+    private permissionService: PermissionService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.appName = localStorage.getItem('appName') || '微应用';
+    try {
+      const allMenus = await firstValueFrom(this.permissionService.getUserVisibleMenus());
+      this.menus = this.buildMenuTree(allMenus);
+    } finally {
+      this.cdr.detectChanges();
+    }
   }
 
-  onMenuSelect(menu: Menu): void {
+  private buildMenuTree(menus: Menu[]): MenuDto[] {
+    const map = new Map<number, MenuDto>();
+    const tree: MenuDto[] = [];
+
+    menus.forEach((menu) => {
+      map.set(menu.id, {
+        type: menu.code,
+        name: menu.name,
+        icon: menu.icon,
+        url: menu.path,
+        sortOrder: menu.sortOrder,
+        children: [],
+      });
+    });
+
+    menus.forEach((menu) => {
+      const menuNode = map.get(menu.id);
+      if (menu.parentId == null) {
+        tree.push(menuNode!);
+      } else {
+        const parentNode = map.get(menu.parentId);
+        if (parentNode) {
+          parentNode.children?.push(menuNode!);
+        }
+      }
+    });
+
+    tree.sort((a, b) => a.sortOrder - b.sortOrder);
+    tree.forEach((item) => {
+      item.children?.sort((a, b) => a.sortOrder - b.sortOrder);
+    });
+
+    return tree;
+  }
+
+  onMenuSelect(menu: MenuDto): void {
     this.destroyMicroApp();
 
-    if (menu.type == 'route') {
+    if (menu.type == 'router') {
       this.isMicroapp = false;
       this.router.navigate([menu.url || '/']);
     } else if (menu.type == 'microapp') {

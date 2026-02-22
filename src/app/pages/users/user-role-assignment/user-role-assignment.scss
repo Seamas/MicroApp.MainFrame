@@ -1,0 +1,52 @@
+.assignment-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 0 12px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 16px;
+}
+
+.role-transfer {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+}
+
+.transfer-panel {
+  flex: 1;
+  min-width: 280px;
+}
+
+.panel-header {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.transfer-operations {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 8px;
+
+  button {
+    width: 40px;
+    height: 32px;
+    font-weight: bold;
+  }
+}
+
+// 选中项高亮
+::ng-deep .ant-list-item.selected {
+  background-color: #e6f7ff;
+  border-left: 3px solid #1890ff;
+}
+
+nz-list {
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  max-height: 400px;
+  overflow: auto;
+}

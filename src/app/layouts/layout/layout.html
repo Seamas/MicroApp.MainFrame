@@ -2,7 +2,7 @@
   <nz-sider [(nzCollapsed)]="isCollapsed">
     <div class="logo">{{ appName }}</div>
     <app-menu
-      [menus]="apps"
+      [menus]="menus"
       [isCollapsed]="isCollapsed"
       (menuSelect)="onMenuSelect($event)"
     ></app-menu>

@@ -1,0 +1,50 @@
+<nz-spin [nzSpinning]="loading">
+  <div class="permission-toolbar">
+  <button nz-button nzType="primary" (click)="savePermissions()">保存</button>
+</div>
+
+
+  <nz-tabs [(nzSelectedIndex)]="activeTabIndex" [nzAnimated]="false">
+  
+    <!-- 菜单权限覆盖 -->
+    <nz-tab nzTitle="菜单权限覆盖">
+      <div class="permission-actions">
+        <button nz-button nzType="default" (click)="resetMenuPermissions()">
+          <i nz-icon nzType="sync"></i> 重置为角色默认
+        </button>
+        <nz-alert
+          nzType="info"
+          nzMessage="说明：取消勾选表示禁用该菜单（即使角色允许）"
+        ></nz-alert>
+      </div>
+
+      <nz-tree
+        [nzData]="menuTree"
+        nzCheckable
+        [(nzCheckedKeys)]="checkedMenuKeys"
+      >
+      </nz-tree>
+    </nz-tab>
+
+    <!-- API 权限覆盖 -->
+    <nz-tab nzTitle="API 权限覆盖">
+      <div class="permission-actions">
+        <button nz-button nzType="default" (click)="resetApiPermissions()">
+          <i nz-icon nzType="sync"></i> 重置为角色默认
+        </button>
+        <nz-alert
+          nzType="info"
+          nzMessage="说明：取消勾选表示禁用该 API 接口（即使角色允许）"
+        ></nz-alert>
+      </div>
+
+      <nz-tree
+      [nzData]="apiTree"
+      nzCheckable
+      [(nzCheckedKeys)]="checkedApiKeys"
+      >
+
+      </nz-tree>
+    </nz-tab>
+  </nz-tabs>
+</nz-spin>

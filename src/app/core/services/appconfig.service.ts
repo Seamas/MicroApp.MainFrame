@@ -1,11 +1,7 @@
 import { Observable } from 'rxjs';
 import { RawHttpClient } from './raw.http';
 import { Injectable } from '@angular/core';
-
-interface AppNameConfig {
-  appTitle: string;
-  appName: string;
-}
+import { AppNameConfig } from '../models/app-name-config.model';
 
 @Injectable({ providedIn: 'root' })
 export class AppConfigService {

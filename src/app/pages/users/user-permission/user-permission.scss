@@ -1,0 +1,48 @@
+.permission-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 0 12px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 5px;
+}
+
+.permission-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.api-group {
+  margin-bottom: 24px;
+}
+
+.api-list {
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  padding: 12px;
+}
+
+.api-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px dashed #eee;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.api-info {
+  flex: 1;
+}
+
+nz-alert {
+  margin-top: 8px;
+}
+
+nz-tree {
+  margin-top: 16px;
+}

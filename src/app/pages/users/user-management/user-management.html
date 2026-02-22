@@ -55,7 +55,7 @@
             <th nzWidth="25%">昵称</th>
             <th nzWidth="50%">邮箱</th>
             <th nzWidth="100px">状态</th>
-            <th nzWidth="180px" nzAlign="right">操作</th>
+            <th nzWidth="340px" nzAlign="right">操作</th>
           </tr>
         </thead>
         <tbody>
@@ -75,6 +75,12 @@
               <td>
                 <div class="action-buttons">
                   <button nz-button nzSize="small" (click)="openUserModal(user.id)">编辑</button>
+                  <button nz-button nzType="default" nzSize="small" (click)="openRoleAssignModal(user)">
+                    角色授权
+                  </button>
+                  <button nz-button nzType="default" nzSize="small" (click)="openPermissionsModal(user)">
+                    权限分配
+                  </button>
                   <button nz-button nzDanger nzSize="small" (click)="resetPassword(user)">
                     重置密码
                   </button>

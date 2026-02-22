@@ -5,6 +5,8 @@ import { QueryRole } from '../models/requests/query-role.model';
 import { Observable } from 'rxjs';
 import { PageResultModel } from '../models/responses/page-result.model';
 import { Role } from '../models/requests/role.model';
+import { User } from '../models/requests/user.model';
+import { Menu } from '../models/requests/menu.model';
 
 @Injectable({ providedIn: 'root' })
 export class RoleService {
@@ -34,7 +36,7 @@ export class RoleService {
     return this.http.post<boolean>('/api/rbac/roles/enable', { id });
   }
 
-    disable(id: number): Observable<boolean> {
+  disable(id: number): Observable<boolean> {
     return this.http.post<boolean>('/api/rbac/roles/disable', { id });
   }
 
@@ -44,5 +46,21 @@ export class RoleService {
 
   checkCode(code: string, id?: number): Observable<boolean> {
     return this.http.post<boolean>('/api/rbac/roles/check-code', { id, code });
+  }
+
+  getUsersByRoleId(roleId: number): Observable<User[]> {
+    return this.http.post<User[]>('/api/rbac/roles/get-users-by-role', { roleId });
+  }
+
+  assignUsersToRole(roleId: number, userIds: number[]): Observable<boolean> {
+    return this.http.post<boolean>('/api/rbac/roles/assign-users-to-role', { roleId, userIds });
+  }
+
+  getMenusByRole(roleId: number): Observable<Menu[]> {
+    return this.http.post<Menu[]>('/api/rbac/roles/get-menus-by-role', { roleId });
+  }
+
+  getEndpointsByRole(roleId: number): Observable<ApiEndpoint[]> {
+    return this.http.post<ApiEndpoint[]>(`/api/rbac/roles/get-endpoints-by-role`, { roleId });
   }
 }

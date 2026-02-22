@@ -47,7 +47,7 @@
             <th nzWidth="35%">角色名称</th>
             <th nzWidth="35%">角色编辑</th>
             <th nzWidth="100px">状态</th>
-            <th nzWidth="80px" nzAlign="right">操作</th>
+            <th nzWidth="180px" nzAlign="right">操作</th>
           </tr>
         </thead>
         <tbody>
@@ -66,6 +66,10 @@
               <td>
                 <div class="action-buttons">
                   <button nz-button nzSize="small" (click)="openRoleModal(role.id)">编辑</button>
+                  <button nz-button nzSize="small" (click)="openRoleUserModal(role)">管理角色</button>
+                    <button nz-button nzSize="small" (click)="openRolePermissionModal(role)">
+                      管理权限
+                    </button>
                   <button nz-button nzDanger nzSize="small" (click)="deleteRole(role)">
                     删除角色
                   </button>
@@ -80,8 +84,8 @@
     <!-- 分页 -->
     <div class="pagination-wrapper">
       <nz-pagination
-        [nzPageIndex]="pageIndex"
-        [nzPageSize]="pageSize"
+          [nzPageIndex]="pageIndex"
+          [nzPageSize]="pageSize"
         [nzTotal]="total"
         [nzPageSizeOptions]="[10, 20, 50]"
         (nzPageIndexChange)="onPageIndexChanged($event)"

@@ -46,8 +46,11 @@ export class MenuService {
     return this.http.post<boolean>('/api/rbac/menus/enable', { id });
   }
 
-
   disable(id: number): Observable<boolean> {
     return this.http.post<boolean>('/api/rbac/menus/disable', { id });
+  }
+
+  getAllMenus(): Observable<Menu[]> {
+    return this.http.get<Menu[]>('/api/rbac/menus/get-all');
   }
 }

@@ -1,0 +1,42 @@
+.permission-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 0 12px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 5px;
+}
+
+.group-header {
+  margin: 16px 0 8px;
+  font-weight: bold;
+}
+
+.api-list {
+  padding: 12px;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+.api-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  width: 100%;
+  cursor: pointer;
+
+  .api-info {
+    margin-left: 8px;
+    flex: 1;
+  }
+}
+
+nz-alert {
+  margin-bottom: 16px;
+}
+
+nz-tree {
+  padding: 12px;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+}

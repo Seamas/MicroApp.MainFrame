@@ -1,0 +1,38 @@
+<div class="permission-toolbar">
+  <button nz-button nzType="primary" (click)="save()">保存</button>
+</div>
+
+<nz-tabs [(nzSelectedIndex)]="activeTab" [nzAnimated]="false">
+  <!-- Tab 1: 菜单权限 -->
+  <nz-tab nzTitle="菜单权限">
+    <nz-spin [nzSpinning]="loadingMenus">
+      <nz-alert
+        nzType="info"
+        nzMessage="勾选菜单表示授予访问权限"
+      ></nz-alert>
+      <nz-tree
+        [nzData]="menuTree"
+        nzCheckable
+        [(nzCheckedKeys)]="checkedMenuIds"
+        [nzCheckStrictly]="false"
+      >
+      </nz-tree>
+    </nz-spin>
+  </nz-tab>
+
+  <!-- Tab 2: API 权限 -->
+  <nz-tab nzTitle="接口权限">
+    <nz-spin [nzSpinning]="loadingApis">
+      <nz-alert
+        nzType="info"
+        nzMessage="勾选接口表示授予调用权限"
+      ></nz-alert>
+      <nz-tree
+        [nzData]="apiGroupTree"
+        nzCheckable
+        [(nzCheckedKeys)]="checkedApiIds"
+        [nzCheckStrictly]="false"
+      ></nz-tree>
+    </nz-spin>
+  </nz-tab>
+</nz-tabs>

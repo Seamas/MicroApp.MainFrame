@@ -17,6 +17,8 @@ import { UserService } from '../../../core/services/user.service';
 import { UserEditFormComponent } from '../user-edit/user-edit';
 
 import { firstValueFrom } from 'rxjs';
+import { UserPermissionComponent } from '../user-permission/user-permission';
+import { UserRoleAssignmentComponent } from '../user-role-assignment/user-role-assignment';
 
 @Component({
   selector: 'app-user-management',
@@ -76,7 +78,7 @@ export class UserManagementComponent implements OnInit {
 
   loadUsers(pageIndex?: number, pageSize?: number) {
     this.userService
-      .listUsers({
+      .searchUsers({
         pageIndex: pageIndex || this.pageIndex,
         pageSize: pageSize || this.pageSize,
         username: this.searchForm.get('username')?.value || '',
@@ -116,6 +118,38 @@ export class UserManagementComponent implements OnInit {
     modalRef.afterClose.subscribe((result) => {
       if (result) {
         this.msg.success(title + '成功!', { nzDuration: 3000 });
+        this.loadUsers();
+      }
+    });
+  }
+
+  async openRoleAssignModal(user: User) {
+    const modalRef = this.modal.create({
+      nzTitle: `分配角色给用户-${user.username}`,
+      nzContent: UserRoleAssignmentComponent,
+      nzData: { user },
+      nzWidth: 800,
+      nzFooter: null,
+      nzMaskClosable: false,
+      nzClosable: true,
+    });
+
+    modalRef.afterClose.subscribe((result) => {});
+  }
+
+  async openPermissionsModal(user: User) {
+    const modalRef = this.modal.create({
+      nzTitle: `用户权限分配-${user.username}`,
+      nzContent: UserPermissionComponent,
+      nzData: { user },
+      nzFooter: null,
+      nzMaskClosable: false,
+      nzClosable: true,
+    });
+
+    modalRef.afterClose.subscribe((result) => {
+      if (result) {
+        this.msg.success('权限分配成功!', { nzDuration: 3000 });
         this.loadUsers();
       }
     });

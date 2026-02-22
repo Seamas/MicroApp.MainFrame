@@ -2,32 +2,17 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PageResultModel } from '../models/responses/page-result.model';
-
-interface SearchApiEndpointsRequest {
-  pageIndex?: number;
-  pageSize?: number;
-  url?: string;
-  apiGroup?: string;
-  description?: string;
-  isEnabled?: boolean | null;
-}
-
-interface CreateApiEndpointRequest {
-  url: string;
-  apiGroup: string;
-  description: string;
-}
-
-interface UpdateApiEndpointRequest {
-  id: number;
-  url: string;
-  apiGroup: string;
-  description: string;
-}
+import { SearchApiEndpointsRequest } from '../models/requests/search-endpoint-request.model';
+import { CreateApiEndpointRequest } from '../models/requests/create-endpoint-request.model';
+import { UpdateApiEndpointRequest } from '../models/requests/update-endpoint-request.model.';
 
 @Injectable({ providedIn: 'root' })
 export class ApiEndpointService {
   constructor(private http: HttpClient) {}
+
+  getAllApiEndpoints(): Observable<ApiEndpoint[]> {
+    return this.http.get<ApiEndpoint[]>(`/api/rbac/endpoints/get-all`);
+  }
 
   getApiEndpoint(id: number): Observable<ApiEndpoint> {
     return this.http.post<ApiEndpoint>(`/api/rbac/endpoints/get`, { id });

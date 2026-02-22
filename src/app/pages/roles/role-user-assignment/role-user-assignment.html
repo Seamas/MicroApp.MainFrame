@@ -1,0 +1,126 @@
+<nz-spin [nzSpinning]="loading">
+  <!-- 顶部工具栏 -->
+  <div class="assignment-toolbar">
+    <button nz-button nzType="primary" (click)="save()">保存</button>
+  </div>
+
+  <div class="user-transfer">
+    <!-- 左侧：所有用户 -->
+    <div class="transfer-panel">
+      <div class="panel-header">
+        <h4>所有用户 ({{ allUsers.length }})</h4>
+        <nz-input-group [nzSuffix]="suffixSearch">
+          <input
+            type="text"
+            nz-input
+            placeholder="搜索用户名/姓名/邮箱"
+            [(ngModel)]="searchAll"
+            (ngModelChange)="applyAllSearch()"
+          />
+        </nz-input-group>
+        <ng-template #suffixSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+      <nz-list
+        [nzDataSource]="filteredAllUsers"
+        [nzRenderItem]="item"
+        [nzItemLayout]="'horizontal'"
+        [nzSize]="'small'"
+        [nzLoading]="loading"
+        [nzNoResult]="'无匹配用户'"
+      >
+        <ng-template #item let-user>
+          <nz-list-item
+            [class.selected]="selectedAllUserIds.has(user.id)"
+            (click)="selectedAllUserIds.has(user.id) ? selectedAllUserIds.delete(user.id) : selectedAllUserIds.add(user.id)"
+          >
+            <nz-list-item-meta
+              [nzTitle]="user.nickname + ' (' + user.username + ')'"
+              [nzDescription]="user.email"
+            ></nz-list-item-meta>
+          </nz-list-item>
+        </ng-template>
+      </nz-list>
+    </div>
+
+    <!-- 中间操作按钮 -->
+    <div class="transfer-operations">
+      <button
+        nz-button
+        nzType="default"
+        [disabled]="selectedAllUserIds.size === 0"
+        (click)="addSelectedUsers()"
+        title="添加选中用户"
+      >
+        &gt;
+      </button>
+      <button
+        nz-button
+        nzType="default"
+        [disabled]="filteredAllUsers.length === 0"
+        (click)="addAllUsers()"
+        title="添加全部用户"
+      >
+        &gt;&gt;
+      </button>
+      <button
+        nz-button
+        nzType="default"
+        [disabled]="selectedAssignedUserIds.size === 0"
+        (click)="removeSelectedUsers()"
+        title="移除选中用户"
+      >
+        &lt;
+      </button>
+      <button
+        nz-button
+        nzType="default"
+        [disabled]="assignedUsers.length === 0"
+        (click)="removeAllUsers()"
+        title="移除全部用户"
+      >
+        &lt;&lt;
+      </button>
+    </div>
+
+    <!-- 右侧：已授权用户 -->
+    <div class="transfer-panel">
+      <div class="panel-header">
+        <h4>可管理用户 ({{ assignedUsers.length }})</h4>
+        <nz-input-group [nzSuffix]="suffixSearch2">
+          <input
+            type="text"
+            nz-input
+            placeholder="搜索已授权用户"
+            [(ngModel)]="searchAssigned"
+            (ngModelChange)="applyAssignedSearch()"
+          />
+        </nz-input-group>
+        <ng-template #suffixSearch2>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+      <nz-list
+        [nzDataSource]="filteredAssignedUsers"
+        [nzRenderItem]="item"
+        [nzItemLayout]="'horizontal'"
+        [nzSize]="'small'"
+        [nzLoading]="loading"
+        [nzNoResult]="'暂无可管理用户'"
+      >
+        <ng-template #item let-user>
+          <nz-list-item
+            [class.selected]="selectedAssignedUserIds.has(user.id)"
+            (click)="selectedAssignedUserIds.has(user.id) ? selectedAssignedUserIds.delete(user.id) : selectedAssignedUserIds.add(user.id)"
+          >
+            <nz-list-item-meta
+              [nzTitle]="user.nickname + ' (' + user.username + ')'"
+              [nzDescription]="user.email"
+            ></nz-list-item-meta>
+          </nz-list-item>
+        </ng-template>
+      </nz-list>
+    </div>
+  </div>
+</nz-spin>

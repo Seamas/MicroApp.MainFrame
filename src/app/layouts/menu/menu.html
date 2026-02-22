@@ -10,7 +10,7 @@
         <ul>
           @for (child of item.children; track child.name) {
             <li nz-menu-item (click)="selectItem(child)">
-              <i nz-icon [nzType]="child.icon"></i>
+              <i nz-icon [nzType]="child.icon!"></i>
               <span>{{ child.name }}</span>
             </li>
           }
@@ -18,7 +18,7 @@
       </li>
     } @else {
       <li nz-menu-item (click)="selectItem(item)">
-        <i nz-icon [nzType]="item.icon"></i>
+        <i nz-icon [nzType]="item.icon!"></i>
         <span>{{ item.name }}</span>
       </li>
     }

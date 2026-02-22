@@ -1,44 +1,12 @@
 import { Injectable, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-interface LoginRequest {
-  username: string;
-  password: string;
-}
-
-interface LoginResponse {
-  token: string;
-  username: string;
-  nickname: string;
-}
-
-interface RegisterRequest {
-  username: string;
-  nickname: string;
-  email: string;
-  password: string;
-}
-
-interface RegisterResponse {}
-
-interface ProfileResponse {
-  username: string;
-  nickname: string;
-  email: string;
-}
-
-interface ChangePasswordRequest {
-  oldPassword: string;
-  newPassword: string;
-}
-
-interface ChangePasswordResponse {}
-
-interface UpdateProfileRequest {
-  nickname: string;
-  email: string;
-}
+import { LoginRequest } from '../models/requests/login-request.model';
+import { RegisterRequest } from '../models/requests/register-request.model';
+import { ProfileResponse } from '../models/responses/profile-response.model';
+import { UpdateProfileRequest } from '../models/requests/update-profile-request.model';
+import { ChangePasswordRequest } from '../models/requests/change-password-request.model';
+import { LoginResponse } from '../models/responses/login-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -54,8 +22,8 @@ export class AuthService {
     return this.http.post<LoginResponse>(`/api/rbac/auth/login`, credentials);
   }
 
-  register(user: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`/api/rbac/auth/register`, user);
+  register(user: RegisterRequest): Observable<boolean> {
+    return this.http.post<boolean>(`/api/rbac/auth/register`, user);
   }
 
   logout() {
@@ -70,7 +38,7 @@ export class AuthService {
     return this.http.post<ProfileResponse>(`/api/rbac/auth/update-profile`, req);
   }
 
-  changePassword(req: ChangePasswordRequest): Observable<ChangePasswordResponse> {
-    return this.http.post<ChangePasswordResponse>(`/api/rbac/auth/change-password`, req);
+  changePassword(req: ChangePasswordRequest): Observable<boolean> {
+    return this.http.post<boolean>(`/api/rbac/auth/change-password`, req);
   }
 }

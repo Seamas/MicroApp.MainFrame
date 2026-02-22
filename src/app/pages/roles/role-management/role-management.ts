@@ -16,6 +16,8 @@ import { RoleService } from '../../../core/services/role.service';
 import { RoleEditComponent } from '../role-edit/role-edit';
 
 import { firstValueFrom } from 'rxjs';
+import { RolePermissionComponent } from '../role-permission/role-permission';
+import { RoleUserAssignmentComponent } from '../role-user-assignment/role-user-assignment';
 
 @Component({
   selector: 'app-role-management',
@@ -118,6 +120,31 @@ export class RoleManagementComponent implements OnInit {
         this.loadRoles();
       }
     });
+  }
+
+  async openRoleUserModal(role: Role) {
+    const modalRef = this.modal.create({
+      nzTitle: `管理用户 - ${role.name}`,
+      nzContent: RoleUserAssignmentComponent,
+      nzData: { role },
+      nzFooter: null,
+      nzMaskClosable: false,
+      nzClosable: true,
+      nzWidth: 800,
+    });
+    modalRef.afterClose.subscribe((result) => {});
+  }
+
+  async openRolePermissionModal(role: Role) {
+    const modalRef = this.modal.create({
+      nzTitle: `分配权限 - ${role.name}`,
+      nzContent: RolePermissionComponent,
+      nzData: { role },
+      nzFooter: null,
+      nzMaskClosable: false,
+      nzClosable: true,
+    });
+    modalRef.afterClose.subscribe((result) => {});
   }
 
   async toggleStatus(newValue: boolean, role: Role) {
