@@ -6,6 +6,7 @@ import { PageResultModel } from '../models/responses/page-result.model';
 import { QueryUser } from '../models/requests/query-user.model';
 import { Role } from '../models/requests/role.model';
 import { Menu } from '../models/requests/menu.model';
+import { ApiEndpoint } from '../models/api-endpoint.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {

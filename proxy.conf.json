@@ -1,6 +1,6 @@
 {
   "/api/rbac": {
-    "target": "http://localhost:5241",
+    "target": "http://localhost:5202",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",

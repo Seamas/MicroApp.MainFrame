@@ -15,6 +15,7 @@ import { NzTreeModule, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
 import { firstValueFrom } from 'rxjs';
 import { UserService } from '../../../core/services/user.service';
 import { ApiGroup } from '../../../core/models/api-group.model';
+import { ApiEndpoint } from '../../../core/models/api-endpoint.model';
 import { PermissionService } from '../../../core/services/permission.service';
 
 interface User {
@@ -110,7 +111,7 @@ export class UserPermissionComponent {
       this.allApis = await firstValueFrom(this.userService.getApisByUserId(this.data.user.id));
 
       const apiGroups = this.allApis.reduce((groups, api) => {
-        let group = groups.find((g) => g.name === api.apiGroup);
+        let group = groups.find((g: ApiGroup) => g.name === api.apiGroup);
         if (!group) {
           group = { name: api.apiGroup, children: [] };
           groups.push(group);
@@ -119,10 +120,10 @@ export class UserPermissionComponent {
         return groups;
       }, [] as ApiGroup[]);
 
-      this.apiTree = apiGroups.map((group) => ({
+      this.apiTree = apiGroups.map((group: ApiGroup) => ({
         title: `${group.name} 接口 (${group.children.length})`,
         key: 'group_' + group.name,
-        children: group.children.map((api) => ({
+        children: group.children.map((api: ApiEndpoint) => ({
           title: api.description,
           key: api.id.toString(),
           data: { url: api.url, description: api.description },

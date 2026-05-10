@@ -17,6 +17,7 @@ import { ApiEditComponent } from '../api-edit/api-edit';
 import { firstValueFrom } from 'rxjs';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { ApiEndpointService } from '../../../core/services/endpoint.service';
+import { ApiEndpoint } from '../../../core/models/api-endpoint.model';
 
 @Component({
   selector: 'app-api-management',

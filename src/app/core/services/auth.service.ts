@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { LoginRequest } from '../models/requests/login-request.model';
@@ -15,7 +15,6 @@ export class AuthService {
   constructor(private http: HttpClient) {
     this.nickname = localStorage.getItem('nickname') || '';
   }
-  ngOnInit(): void {}
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
     // 注意：这里直接返回 LoginResponse，因为拦截器已提取 data

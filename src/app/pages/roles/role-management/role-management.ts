@@ -73,7 +73,10 @@ export class RoleManagementComponent implements OnInit {
       const res = await firstValueFrom(this.roleService.searchRoles(query));
       this.roles = res.items;
       this.total = res.totalCount;
-    } catch (error) {}
+    } catch (error) {
+      this.message.error('加载角色列表失败');
+      console.error('Failed to load roles:', error);
+    }
     this.loading = false;
     this.cdr.detectChanges();
   }

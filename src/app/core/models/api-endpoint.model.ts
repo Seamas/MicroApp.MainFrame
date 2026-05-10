@@ -1,4 +1,4 @@
-interface ApiEndpoint {
+export interface ApiEndpoint {
   id: number;
   url: string;
   apiGroup: string;

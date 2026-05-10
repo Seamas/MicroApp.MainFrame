@@ -23,6 +23,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { FormErrorService } from '../../../core/services/form-error.service';
 import { ApiEndpointService } from '../../../core/services/endpoint.service';
+import { ApiEndpoint } from '../../../core/models/api-endpoint.model';
 
 @Component({
   selector: 'app-api-edit',

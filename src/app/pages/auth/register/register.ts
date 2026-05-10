@@ -1,5 +1,5 @@
 // src/app/auth/register/register.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -44,11 +44,12 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
   templateUrl: './register.html',
   styleUrls: ['./register.scss'],
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
   validateForm!: FormGroup;
   errorMessage: string | null = null;
 
   validatingUsername = false;
+  private navigateTimer?: number;
 
   constructor(
     private fb: FormBuilder,
@@ -57,6 +58,12 @@ export class RegisterComponent implements OnInit {
     private msg: NzMessageService,
     private userService: UserService,
   ) {}
+
+  ngOnDestroy(): void {
+    if (this.navigateTimer) {
+      window.clearTimeout(this.navigateTimer);
+    }
+  }
 
   ngOnInit(): void {
     this.validateForm = this.fb.group(
@@ -149,14 +156,12 @@ export class RegisterComponent implements OnInit {
 
       const { username, nickname, email, password } = this.validateForm.value;
 
-      // 模拟注册（实际应调用 API）
       this.authService.register({ username, nickname, email, password }).subscribe((res) => {
-        let countdown = 3;
-        this.msg.loading(`注册成功, ${countdown}秒后返回到登录页面！`, {
+        this.msg.loading('注册成功, 3秒后返回到登录页面！', {
           nzDuration: 3000,
         });
 
-        setInterval(() => {
+        this.navigateTimer = window.setTimeout(() => {
           this.router.navigate(['/login']);
         }, 3000);
       });
