@@ -151,7 +151,7 @@ export class RoleUserAssignmentComponent implements OnInit {
       const res = await firstValueFrom(
         this.roleService.assignUsersToRole(this.roleId, assignedUserIds),
       );
-      if (res) {
+      if (res === true) {
         this.msg.success('管理用户范围已更新成功');
       } else {
         this.msg.error('管理用户范围更新失败');

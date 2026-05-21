@@ -177,7 +177,7 @@ export class MenuManagementComponent implements OnInit {
       nzOnOk: async () => {
         try {
           const res = await firstValueFrom(this.menuService.deleteMenu(menu.id!));
-          if (res) {
+          if (res === true) {
             this.msg.success('菜单删除成功');
             this.loadMenus();
           } else {

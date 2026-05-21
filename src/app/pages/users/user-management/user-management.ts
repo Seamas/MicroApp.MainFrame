@@ -184,7 +184,7 @@ export class UserManagementComponent implements OnInit {
       nzOnOk: async () => {
         try {
           const res = await firstValueFrom(this.userService.resetPassword(user.id));
-          if (res) {
+          if (res === true) {
             this.msg.success(`${user.nickname} 密码重置成功, 请及时进行修改`);
           }
         } catch (error) {

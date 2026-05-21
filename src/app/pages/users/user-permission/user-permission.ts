@@ -209,7 +209,7 @@ export class UserPermissionComponent {
         }),
       );
 
-      if (res) {
+      if (res === true) {
         this.msg.success('权限配置保存成功');
       } else {
         this.msg.error('权限配置保存失败');

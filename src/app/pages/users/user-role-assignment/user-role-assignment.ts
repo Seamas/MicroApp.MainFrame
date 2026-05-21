@@ -158,7 +158,7 @@ export class UserRoleAssignmentComponent implements OnInit {
     const assignedIds = this.assignedRoles.map((r) => r.id);
     try {
       const res = await firstValueFrom(this.userService.assignRoles(this.user.id, assignedIds));
-      if (res) {
+      if (res === true) {
         this.msg.success('角色分配已保存');
       } else {
         this.msg.error('角色分配失败');

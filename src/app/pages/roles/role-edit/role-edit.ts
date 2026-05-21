@@ -159,7 +159,7 @@ export class RoleEditComponent implements OnInit {
         } else {
           res = await firstValueFrom(this.roleService.createRole(name, code));
         }
-        if (res) {
+        if (res === true) {
           this.modalRef.close(this.form.value);
         } else {
           this.msg.error('操作失败');

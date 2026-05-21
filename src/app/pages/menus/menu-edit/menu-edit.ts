@@ -151,7 +151,7 @@ export class MenuEditComponent implements OnInit {
             this.menuService.createMenu({ name, code, path, parentId, sortOrder }),
           );
         }
-        if (res) {
+        if (res === true) {
           this.modalRef.close(this.form.value);
         } else {
           this.msg.error('操作失败');

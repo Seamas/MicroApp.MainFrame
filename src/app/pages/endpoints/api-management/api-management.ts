@@ -160,7 +160,7 @@ export class ApiManagementComponent implements OnInit {
       nzOnOk: async () => {
         try {
           const res = await firstValueFrom(this.endpointService.deleteApiEndpoint(menu.id!));
-          if (res) {
+          if (res === true) {
             this.msg.success('API端点删除成功');
             this.loadData();
           } else {
@@ -181,7 +181,7 @@ export class ApiManagementComponent implements OnInit {
       nzOnOk: async () => {
         try {
           const res = await firstValueFrom(this.endpointService.initApiEndpoints());
-          if (res) {
+          if (res === true) {
             this.msg.success('API端点初始化成功');
             this.loadData();
           } else {
