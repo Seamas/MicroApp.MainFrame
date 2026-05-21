@@ -69,7 +69,9 @@ export class ProfileComponent implements OnInit {
         this.msg.success('修改用户信息成功', {
           nzDuration: 3000,
         });
-      } catch (error) {}
+      } catch (error) {
+        this.msg.error('修改用户信息失败', { nzDuration: 3000 });
+      }
       this.loading = false;
     }
   }

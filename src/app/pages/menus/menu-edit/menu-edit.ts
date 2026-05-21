@@ -174,15 +174,15 @@ export class MenuEditComponent implements OnInit {
 
     if (codeControl?.errors) {
       if (codeControl.errors['required']) {
-        this.msg.error('请输入角色编码');
+        this.msg.error('请输入菜单编码');
       }
     } else if (nameControl?.errors) {
       if (nameControl.errors['required']) {
-        this.msg.error('请输入角色名称');
+        this.msg.error('请输入菜单名称');
       } else if (nameControl.errors['minlength']) {
-        this.msg.error('角色名称至少需要2个字符');
+        this.msg.error('菜单名称至少需要2个字符');
       } else if (nameControl.errors['maxlength']) {
-        this.msg.error('角色名称不能超过30个字符');
+        this.msg.error('菜单名称不能超过30个字符');
       }
     }
   }

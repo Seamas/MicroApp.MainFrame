@@ -80,9 +80,9 @@ export class RolePermissionComponent implements OnInit {
 
     try {
       const [allMenus, grantedMenus, allApis, grantedApis] = await Promise.all([
+        firstValueFrom(this.menuService.getAllMenus()),
         firstValueFrom(this.roleService.getMenusByRole(this.roleId)),
-        firstValueFrom(this.roleService.getMenusByRole(this.roleId)),
-        firstValueFrom(this.roleService.getEndpointsByRole(this.roleId)),
+        firstValueFrom(this.endpointService.getAllApiEndpoints()),
         firstValueFrom(this.roleService.getEndpointsByRole(this.roleId))
       ]);
 
@@ -189,7 +189,11 @@ export class RolePermissionComponent implements OnInit {
           endpointIds: apiIds,
         }),
       );
-      this.msg.success('角色权限已保存');
+      if (res === true) {
+        this.msg.success('角色权限已保存');
+      } else {
+        this.msg.error('角色权限保存失败');
+      }
     } catch (err) {
       this.msg.error('保存失败');
     }

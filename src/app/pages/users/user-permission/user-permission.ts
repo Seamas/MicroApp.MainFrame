@@ -17,26 +17,8 @@ import { UserService } from '../../../core/services/user.service';
 import { ApiGroup } from '../../../core/models/api-group.model';
 import { ApiEndpoint } from '../../../core/models/api-endpoint.model';
 import { PermissionService } from '../../../core/services/permission.service';
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  enabled: boolean;
-}
-
-interface Menu {
-  id: number;
-  name: string;
-  code?: string;
-  parentId?: number | null;
-  children?: Menu[];
-}
-
-interface Role {
-  id: number;
-  name: string;
-}
+import { User } from '../../../core/models/requests/user.model';
+import { Menu } from '../../../core/models/requests/menu.model';
 
 @Component({
   selector: 'app-user-permission',

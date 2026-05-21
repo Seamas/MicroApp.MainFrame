@@ -7,6 +7,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { AuthService } from '../../../core/services/auth.service';
 import { setUser } from '../../../core/stores/userstore';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -29,16 +30,18 @@ export class LoginComponent {
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
-
-  submitForm(): void {
+  
+  async submitForm() {
     if (this.validateForm.valid) {
       const { username, password } = this.validateForm.value;
-
-      this.authService.login({ username, password }).subscribe((res) => {
+      try {
+        const res = await firstValueFrom(this.authService.login({ username, password }));
         setUser(res.username, res.token, res.nickname);
         this.authService.nickname = res.nickname;
         this.router.navigate(['/']);
-      });
+      } catch (err: any) {
+        this.errorMessage = err.message || '登录失败，请检查用户名和密码';
+      }
     } else {
       Object.values(this.validateForm.controls).forEach((control) => {
         if (control.invalid) {

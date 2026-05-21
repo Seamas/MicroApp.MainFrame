@@ -1,5 +1,5 @@
 // src/app/auth/register/register.ts
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, DestroyRef, OnInit, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -27,6 +27,7 @@ import {
   of,
   switchMap,
 } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserService } from '../../../core/services/user.service';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 
@@ -57,6 +58,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private msg: NzMessageService,
     private userService: UserService,
+    private destroyRef: DestroyRef,
   ) {}
 
   ngOnDestroy(): void {
@@ -92,9 +94,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
       { validators: this.confirmPasswordValidator.bind(this) } as AbstractControlOptions,
     );
 
-    this.validateForm.get('username')?.statusChanges.subscribe((status) => {
-      this.validatingUsername = status === 'PENDING';
-    });
+    this.validateForm.get('username')?.statusChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((status) => {
+        this.validatingUsername = status === 'PENDING';
+      });
   }
 
   confirmPasswordValidator(control: AbstractControlOptions) {

@@ -14,7 +14,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { CommonModule } from '@angular/common';
 
-import { catchError, finalize } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 
@@ -66,24 +66,22 @@ export class ChangepwdComponent implements OnInit {
     return this.passwordForm.hasError('mismatch');
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.passwordForm.valid && !this.passwordMismatch) {
       this.loading = true;
 
       const { oldPassword, newPassword } = this.passwordForm.value;
-      this.authService
-        .changePassword({ oldPassword, newPassword })
-        .pipe(
-          finalize(() => {
-            setTimeout(() => (this.loading = false), 1000);
-          }),
-        )
-        .subscribe((res) => {
-          this.passwordForm.reset();
-          this.msg.success('修改密码成功', {
-            nzDuration: 3000,
-          });
+      try {
+        await firstValueFrom(this.authService.changePassword({ oldPassword, newPassword }));
+        this.passwordForm.reset();
+        this.msg.success('修改密码成功', {
+          nzDuration: 3000,
         });
+      } catch (err: any) {
+        this.errorMessage = err.message || '修改密码失败';
+      } finally {
+        setTimeout(() => (this.loading = false), 1000);
+      }
     }
   }
 }

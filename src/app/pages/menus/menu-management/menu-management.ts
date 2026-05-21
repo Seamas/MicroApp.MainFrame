@@ -69,46 +69,48 @@ export class MenuManagementComponent implements OnInit {
     this.searchForm = this.fb.group({ name: [''], code: [''], isEnabled: [null] });
   }
 
-  ngOnInit() {
-    this.loadMenus(1, this.pageSize);
+  async ngOnInit() {
+    await this.loadMenus(1, this.pageSize);
   }
 
   getCodeMap(key: string): string {
     return this.menuCodeMap[key as 'link' | 'router' | 'microapp'] || key;
   }
 
-  onPageIndexChanged(pageIndex: number) {
+  async onPageIndexChanged(pageIndex: number) {
     this.pageIndex = pageIndex;
-    this.loadMenus();
+    await this.loadMenus();
   }
 
-  onPageSizeChanged(pageSize: number) {
+  async onPageSizeChanged(pageSize: number) {
     this.pageSize = pageSize;
     // 计算最大页码
     const maxPage = Math.ceil(this.total / pageSize);
     // 重新计算页码，并且至少要确保页码为1
     this.pageIndex = Math.max(1, Math.min(this.pageIndex, maxPage));
 
-    this.loadMenus();
+    await this.loadMenus();
   }
 
-  loadMenus(pageIndex?: number, pageSize?: number) {
+  async loadMenus(pageIndex?: number, pageSize?: number) {
     const { name, code, isEnabled } = this.searchForm.value;
-
-    this.menuService
-      .searchMenus({
-        pageIndex: pageIndex || this.pageIndex,
-        pageSize: pageSize || this.pageSize,
-        name: name || '',
-        code: code || '',
-        isEnabled: isEnabled,
-      })
-      .subscribe((res) => {
-        this.total = res.totalCount;
-        this.menus = res.items;
-
-        this.cdr.detectChanges();
-      });
+    try {
+      const res = await firstValueFrom(
+        this.menuService.searchMenus({
+          pageIndex: pageIndex || this.pageIndex,
+          pageSize: pageSize || this.pageSize,
+          name: name || '',
+          code: code || '',
+          isEnabled: isEnabled,
+        }),
+      );
+      this.total = res.totalCount;
+      this.menus = res.items;
+    } catch (error) {
+      this.msg.error('获取菜单列表出错', { nzDuration: 3000 });
+    } finally {
+      this.cdr.detectChanges();
+    }
   }
 
   async openMenuModal(id?: number) {
@@ -141,10 +143,10 @@ export class MenuManagementComponent implements OnInit {
       nzClosable: true,
     });
 
-    modalRef.afterClose.subscribe((result) => {
+    modalRef.afterClose.subscribe(async (result) => {
       if (result) {
         this.msg.success(title + '成功!', { nzDuration: 3000 });
-        this.loadMenus();
+        await this.loadMenus();
       }
     });
   }
@@ -179,7 +181,7 @@ export class MenuManagementComponent implements OnInit {
           const res = await firstValueFrom(this.menuService.deleteMenu(menu.id!));
           if (res === true) {
             this.msg.success('菜单删除成功');
-            this.loadMenus();
+            await this.loadMenus();
           } else {
             this.msg.error('删除菜单失败');
           }

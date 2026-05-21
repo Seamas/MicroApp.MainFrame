@@ -13,12 +13,9 @@ import { provideNzIcons } from 'ng-zorro-antd/icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { zh_CN, provideNzI18n } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
-import en from '@angular/common/locales/en';
+import zh from '@angular/common/locales/zh';
 
-// import { GlobalErrorHandler } from './core/handlers/global-error.handler';
-// import { ErrorHandler } from '@angular/core';
-
-registerLocaleData(en);
+registerLocaleData(zh);
 
 export const appConfig: ApplicationConfig = {
   providers: [

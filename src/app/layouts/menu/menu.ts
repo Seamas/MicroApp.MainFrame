@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { NzMenuModule, NzMenuThemeType } from 'ng-zorro-antd/menu';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 
-import { MenuDto } from '../../core/models/menu-dto.mode';
+import { MenuDto } from '../../core/models/menu-dto.model';
 
 @Component({
   selector: 'app-menu',

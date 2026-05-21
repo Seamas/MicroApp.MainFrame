@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, Inject, OnInit } from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
@@ -30,6 +30,7 @@ import {
   of,
   switchMap,
 } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { FormErrorService } from '../../../core/services/form-error.service';
 
@@ -61,6 +62,7 @@ export class RoleEditComponent implements OnInit {
     private roleService: RoleService,
     private msg: NzMessageService,
     private formErrorService: FormErrorService,
+    private destroyRef: DestroyRef,
   ) {
     this.form = this.fb.group({
       name: [
@@ -89,17 +91,22 @@ export class RoleEditComponent implements OnInit {
     if (this.isEdit) {
       const codeControl = this.form.get('code');
       if (codeControl) {
-        codeControl.valueChanges.pipe(distinctUntilChanged()).subscribe((newValue) => {
-          if (newValue === this.data.role?.code) {
-            codeControl.setErrors(null);
-          }
-        });
+        codeControl.valueChanges
+          .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+          .subscribe((newValue) => {
+            if (newValue === this.data.role?.code) {
+              codeControl.setErrors(null);
+            }
+          });
       }
     }
 
-    this.form.get('code')?.statusChanges.subscribe((status) => {
-      this.validatingCode = status === 'PENDING';
-    });
+    this.form
+      .get('code')
+      ?.statusChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((status) => {
+        this.validatingCode = status === 'PENDING';
+      });
   }
 
   private uniqueCodeValidator(): AsyncValidatorFn {

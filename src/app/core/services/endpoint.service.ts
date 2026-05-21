@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { PageResultModel } from '../models/responses/page-result.model';
 import { SearchApiEndpointsRequest } from '../models/requests/search-endpoint-request.model';
 import { CreateApiEndpointRequest } from '../models/requests/create-endpoint-request.model';
-import { UpdateApiEndpointRequest } from '../models/requests/update-endpoint-request.model.';
+import { UpdateApiEndpointRequest } from '../models/requests/update-endpoint-request.model';
 import { ApiEndpoint } from '../models/api-endpoint.model';
 
 @Injectable({ providedIn: 'root' })

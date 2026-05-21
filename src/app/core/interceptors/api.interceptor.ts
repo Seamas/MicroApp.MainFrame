@@ -7,13 +7,15 @@ import { catchError, map } from 'rxjs/operators';
 import { removeUserInfo } from '../stores/userstore';
 
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
-  // 可选：添加默认 headers
   const messageService = inject(NzMessageService);
-  const clonedReq = req.clone({
-    setHeaders: {
-      'Content-Type': 'application/json',
-    },
-  });
+  let clonedReq = req;
+  if (req.body !== null && req.body !== undefined && !(req.body instanceof FormData)) {
+    clonedReq = req.clone({
+      setHeaders: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
   return next(clonedReq).pipe(
     map((event) => {
       // event.type 的含义

@@ -57,40 +57,41 @@ export class UserManagementComponent implements OnInit {
     this.searchForm = this.fb.group({ username: [''], nickname: [''], email: [''] });
   }
 
-  ngOnInit() {
-    this.loadUsers(1, this.pageSize);
+  async ngOnInit() {
+    await this.loadUsers(1, this.pageSize);
   }
 
-  onPageIndexChanged(pageIndex: number) {
+  async onPageIndexChanged(pageIndex: number) {
     this.pageIndex = pageIndex;
-    this.loadUsers();
+    await this.loadUsers();
   }
 
-  onPageSizeChanged(pageSize: number) {
+  async onPageSizeChanged(pageSize: number) {
     this.pageSize = pageSize;
-    // 计算最大页码
     const maxPage = Math.ceil(this.total / pageSize);
-    // 重新计算页码，并且至少要确保页码为1
     this.pageIndex = Math.max(1, Math.min(this.pageIndex, maxPage));
 
-    this.loadUsers();
+    await this.loadUsers();
   }
 
-  loadUsers(pageIndex?: number, pageSize?: number) {
-    this.userService
-      .searchUsers({
-        pageIndex: pageIndex || this.pageIndex,
-        pageSize: pageSize || this.pageSize,
-        username: this.searchForm.get('username')?.value || '',
-        nickname: this.searchForm.get('nickname')?.value || '',
-        email: this.searchForm.get('email')?.value || '',
-      })
-      .subscribe((res) => {
-        this.total = res.totalCount;
-        this.users = res.items;
-
-        this.cdr.detectChanges();
-      });
+  async loadUsers(pageIndex?: number, pageSize?: number) {
+    try {
+      const res = await firstValueFrom(
+        this.userService.searchUsers({
+          pageIndex: pageIndex || this.pageIndex,
+          pageSize: pageSize || this.pageSize,
+          username: this.searchForm.get('username')?.value || '',
+          nickname: this.searchForm.get('nickname')?.value || '',
+          email: this.searchForm.get('email')?.value || '',
+        }),
+      );
+      this.total = res.totalCount;
+      this.users = res.items;
+    } catch (error) {
+      this.msg.error('获取用户列表出错', { nzDuration: 3000 });
+    } finally {
+      this.cdr.detectChanges();
+    }
   }
 
   async openUserModal(id?: number) {

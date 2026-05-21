@@ -18,7 +18,7 @@ import { AuthService } from '../../core/services/auth.service';
 
 import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
 import { finalize, firstValueFrom } from 'rxjs';
-import { MenuDto } from '../../core/models/menu-dto.mode';
+import { MenuDto } from '../../core/models/menu-dto.model';
 
 import { MenuComponent } from '../menu/menu';
 import { PermissionService } from '../../core/services/permission.service';

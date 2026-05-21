@@ -62,29 +62,30 @@ export class ApiManagementComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.loadData(1, this.pageSize);
+  async ngOnInit() {
+    await this.loadData(1, this.pageSize);
   }
 
-  onPageIndexChanged(pageIndex: number) {
+  async onPageIndexChanged(pageIndex: number) {
     this.pageIndex = pageIndex;
-    this.loadData();
+    await this.loadData();
   }
 
-  onPageSizeChanged(pageSize: number) {
+  async onPageSizeChanged(pageSize: number) {
     this.pageSize = pageSize;
     // 计算最大页码
     const maxPage = Math.ceil(this.total / pageSize);
     // 重新计算页码，并且至少要确保页码为1
     this.pageIndex = Math.max(1, Math.min(this.pageIndex, maxPage));
 
-    this.loadData();
+    await this.loadData();
   }
 
-  loadData(pageIndex?: number, pageSize?: number) {
+  async loadData(pageIndex?: number, pageSize?: number) {
     const { url, apiGroup, description, isEnabled } = this.searchForm.value;
 
-    this.endpointService
+    try {
+      const res = await firstValueFrom(this.endpointService
       .searchApiEndpoints({
         pageIndex: pageIndex || this.pageIndex,
         pageSize: pageSize || this.pageSize,
@@ -92,13 +93,15 @@ export class ApiManagementComponent implements OnInit {
         apiGroup: apiGroup || '',
         description: description || '',
         isEnabled: isEnabled,
-      })
-      .subscribe((res) => {
-        this.total = res.totalCount;
-        this.dataItems = res.items;
-
-        this.cdr.detectChanges();
-      });
+      }));
+      this.total = res.totalCount;
+      this.dataItems = res.items;
+    } catch (error) {
+      this.msg.error('获取API端点列表出错', { nzDuration: 3000 });
+    }
+    finally{
+      this.cdr.detectChanges();
+    }
   }
 
   async openApiEndpointModal(id?: number) {
@@ -123,10 +126,10 @@ export class ApiManagementComponent implements OnInit {
       nzClosable: true,
     });
 
-    modalRef.afterClose.subscribe((result) => {
+    modalRef.afterClose.subscribe(async (result) => {
       if (result) {
         this.msg.success(title + '成功!', { nzDuration: 3000 });
-        this.loadData();
+        await this.loadData();
       }
     });
   }
@@ -162,7 +165,7 @@ export class ApiManagementComponent implements OnInit {
           const res = await firstValueFrom(this.endpointService.deleteApiEndpoint(menu.id!));
           if (res === true) {
             this.msg.success('API端点删除成功');
-            this.loadData();
+            await this.loadData();
           } else {
             this.msg.error('删除API端点失败');
           }
@@ -183,7 +186,7 @@ export class ApiManagementComponent implements OnInit {
           const res = await firstValueFrom(this.endpointService.initApiEndpoints());
           if (res === true) {
             this.msg.success('API端点初始化成功');
-            this.loadData();
+            await this.loadData();
           } else {
             this.msg.error('API端点初始化失败');
           }
