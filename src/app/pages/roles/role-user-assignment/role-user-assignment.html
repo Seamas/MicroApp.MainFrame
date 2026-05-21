@@ -24,16 +24,16 @@
       </div>
       <nz-list
         [nzDataSource]="filteredAllUsers"
-        [nzRenderItem]="item"
+        [nzRenderItem]="allUserItem"
         [nzItemLayout]="'horizontal'"
         [nzSize]="'small'"
         [nzLoading]="loading"
         [nzNoResult]="'无匹配用户'"
       >
-        <ng-template #item let-user>
+        <ng-template #allUserItem let-user>
           <nz-list-item
             [class.selected]="selectedAllUserIds.has(user.id)"
-            (click)="selectedAllUserIds.has(user.id) ? selectedAllUserIds.delete(user.id) : selectedAllUserIds.add(user.id)"
+            (click)="leftListClick(user.id)"
           >
             <nz-list-item-meta
               [nzTitle]="user.nickname + ' (' + user.username + ')'"
@@ -103,16 +103,16 @@
       </div>
       <nz-list
         [nzDataSource]="filteredAssignedUsers"
-        [nzRenderItem]="item"
+        [nzRenderItem]="assignedUserItem"
         [nzItemLayout]="'horizontal'"
         [nzSize]="'small'"
         [nzLoading]="loading"
         [nzNoResult]="'暂无可管理用户'"
       >
-        <ng-template #item let-user>
+        <ng-template #assignedUserItem let-user>
           <nz-list-item
             [class.selected]="selectedAssignedUserIds.has(user.id)"
-            (click)="selectedAssignedUserIds.has(user.id) ? selectedAssignedUserIds.delete(user.id) : selectedAssignedUserIds.add(user.id)"
+            (click)="rightListClick(user.id)"
           >
             <nz-list-item-meta
               [nzTitle]="user.nickname + ' (' + user.username + ')'"

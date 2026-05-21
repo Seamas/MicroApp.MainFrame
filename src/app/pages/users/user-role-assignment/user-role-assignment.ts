@@ -68,9 +68,14 @@ export class UserRoleAssignmentComponent implements OnInit {
   private async loadRoles() {
     this.loading = true;
     try {
-      this.allRoles = await firstValueFrom(this.roleService.listRoles());
 
-      this.assignedRoles = await firstValueFrom(this.userService.getRoleByUserId(this.user.id));
+      const [allRoles, assignedRoles] = await Promise.all([
+         firstValueFrom(this.roleService.listRoles()),
+         firstValueFrom(this.userService.getRoleByUserId(this.user.id)),
+      ]);
+
+      this.allRoles = allRoles;
+      this.assignedRoles = assignedRoles;
 
       this.applyAllSearch();
       this.applyAssignedSearch();
@@ -116,7 +121,7 @@ export class UserRoleAssignmentComponent implements OnInit {
     );
     this.assignedRoles = this.assignedRoles.filter((r) => !toRemove.has(r.id));
     this.selectedAssignedRoleIds.clear();
-    this.applyAllSearch(); // 可能释放一些角色回左侧
+    this.applyAssignedSearch();
   }
 
   addAllRoles(): void {

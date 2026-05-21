@@ -49,19 +49,19 @@ export class RoleService {
     return this.http.post<boolean>('/api/rbac/roles/check-code', { id, code });
   }
 
-  getUsersByRoleId(roleId: number): Observable<User[]> {
-    return this.http.post<User[]>('/api/rbac/roles/get-users-by-role', { roleId });
+  getUsersByRoleId(id: number): Observable<User[]> {
+    return this.http.post<User[]>('/api/rbac/roles/get-users-by-role', { id });
   }
 
   assignUsersToRole(roleId: number, userIds: number[]): Observable<boolean> {
     return this.http.post<boolean>('/api/rbac/roles/assign-users-to-role', { roleId, userIds });
   }
 
-  getMenusByRole(roleId: number): Observable<Menu[]> {
-    return this.http.post<Menu[]>('/api/rbac/roles/get-menus-by-role', { roleId });
+  getMenusByRole(id: number): Observable<Menu[]> {
+    return this.http.post<Menu[]>('/api/rbac/roles/get-menus-by-role', { id });
   }
 
-  getEndpointsByRole(roleId: number): Observable<ApiEndpoint[]> {
-    return this.http.post<ApiEndpoint[]>(`/api/rbac/roles/get-endpoints-by-role`, { roleId });
+  getEndpointsByRole(id: number): Observable<ApiEndpoint[]> {
+    return this.http.post<ApiEndpoint[]>(`/api/rbac/roles/get-endpoints-by-role`, { id });
   }
 }

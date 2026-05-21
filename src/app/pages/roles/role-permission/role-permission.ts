@@ -16,6 +16,7 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { PermissionService } from '../../../core/services/permission.service';
 import { RoleService } from '../../../core/services/role.service';
 import { ApiGroup } from '../../../core/models/api-group.model';
+import { ApiEndpoint } from '@app/core/models/api-endpoint.model';
 
 interface MenuDto {
   id: number;
@@ -45,16 +46,17 @@ export class RolePermissionComponent implements OnInit {
 
   activeTab = 0;
 
+  loading = false;
+
   // ===== 菜单权限 =====
   menuTree: NzTreeNodeOptions[] = [];
   checkedMenuIds: string[] = [];
-  loadingMenus = false;
+
 
   // ===== API 权限 =====
 
   apiGroupTree: NzTreeNodeOptions[] = [];
   checkedApiIds: string[] = [];
-  loadingApis = false;
 
   constructor(
     private modalRef: NzModalRef,
@@ -74,22 +76,29 @@ export class RolePermissionComponent implements OnInit {
   }
 
   private async loadPermissions() {
-    await this.loadMenus();
-    await this.loadApis();
-  }
+    this.loading = true;
 
-  private async loadMenus() {
-    this.loadingMenus = true;
     try {
-      const menus = await firstValueFrom(this.menuService.getAllMenus());
-      const grantedMenus = await firstValueFrom(this.roleService.getMenusByRole(this.roleId));
-      this.checkedMenuIds = grantedMenus.map((item) => item.id.toString());
+      const [allMenus, grantedMenus, allApis, grantedApis] = await Promise.all([
+        firstValueFrom(this.roleService.getMenusByRole(this.roleId)),
+        firstValueFrom(this.roleService.getMenusByRole(this.roleId)),
+        firstValueFrom(this.roleService.getEndpointsByRole(this.roleId)),
+        firstValueFrom(this.roleService.getEndpointsByRole(this.roleId))
+      ]);
 
-      this.menuTree = this.buildMenuTree(menus);
+      this.makeMenus(allMenus, grantedMenus);
+      this.makeApis(allApis, grantedApis);
+
     } finally {
-      this.loadingMenus = false;
+      this.loading = false;
       this.cdr.detectChanges();
     }
+
+  }
+
+  private makeMenus(allMenus: Menu[], grantedMenus: Menu[]) {
+    this.checkedMenuIds = grantedMenus.map((item) => item.id.toString());
+    this.menuTree = this.buildMenuTree(allMenus);
   }
 
   private buildMenuTree(menus: Menu[]): NzTreeNodeOptions[] {
@@ -141,15 +150,9 @@ export class RolePermissionComponent implements OnInit {
     return resTree;
   }
 
-  private async loadApis() {
-    this.loadingApis = true;
-    try {
-      const apis = await firstValueFrom(this.endpointService.getAllApiEndpoints());
-      const grantedApis = await firstValueFrom(this.roleService.getEndpointsByRole(this.roleId));
-
+  private makeApis(allApis: ApiEndpoint[], grantedApis: ApiEndpoint[]) {
       this.checkedApiIds = grantedApis.map((item) => item.id.toString());
-
-      const apiGroups = apis.reduce((groups, api) => {
+      const apiGroups = allApis.reduce((groups, api) => {
         let group = groups.find((g) => g.name === api.apiGroup);
         if (!group) {
           group = { name: api.apiGroup, children: [] };
@@ -166,12 +169,9 @@ export class RolePermissionComponent implements OnInit {
           title: api.description,
           key: api.id.toString(),
           data: { url: api.url, description: api.description },
+          isLeaf: true,
         })),
       }));
-    } finally {
-      this.loadingApis = false;
-      this.cdr.detectChanges();
-    }
   }
 
   // ===== 保存 =====

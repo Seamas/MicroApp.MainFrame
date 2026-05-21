@@ -25,13 +25,13 @@
       </div>
       <nz-list
         [nzDataSource]="filteredAllRoles"
-        [nzRenderItem]="item1"
+        [nzRenderItem]="allRoleItem"
         [nzItemLayout]="'horizontal'"
         [nzSize]="'small'"
         [nzLoading]="loading"
         [nzNoResult]="'无匹配角色'"
       >
-        <ng-template #item1 let-role>
+        <ng-template #allRoleItem let-role>
           <nz-list-item
             [class.selected]="selectedAllRoleIds.has(role.id)"
             (click)="leftRoleClick(role.id)"
@@ -104,13 +104,13 @@
       </div>
       <nz-list
         [nzDataSource]="filteredAssignedRoles"
-        [nzRenderItem]="item2"
+        [nzRenderItem]="assignedRoleItem"
         [nzItemLayout]="'horizontal'"
         [nzSize]="'small'"
         [nzLoading]="loading"
         [nzNoResult]="'无已分配角色'"
       >
-        <ng-template #item2 let-role>
+        <ng-template #assignedRoleItem let-role>
           <nz-list-item
             [class.selected]="selectedAssignedRoleIds.has(role.id)"
             (click)="rightRoleClick(role.id)"

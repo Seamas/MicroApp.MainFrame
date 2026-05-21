@@ -92,13 +92,18 @@ export class UserPermissionComponent {
   private async loadPermissions() {
     this.loading = true;
     try {
-      // 根据用户角色获取菜单
-      this.allMenus = await firstValueFrom(this.userService.getMenusByUserId(this.data.user.id));
+      // 获取用户的菜单权限和 API 权限
+      const [roleMenus, userDeniedMenus, roleApis, userDeniedApis] =  await Promise.all([
+        firstValueFrom(this.userService.getMenusByUserId(this.data.user.id)),
+        firstValueFrom(this.userService.getMenuPermissionByUserId(this.data.user.id)),
+        firstValueFrom(this.userService.getApisByUserId(this.data.user.id)),
+        firstValueFrom(this.userService.getApiPermissionByUserId(this.data.user.id)),
+      ]);
+
+
+      this.allMenus = roleMenus;
       // 获取用户禁用的菜单
-      const userMenus = await firstValueFrom(
-        this.userService.getMenuPermissionByUserId(this.data.user.id),
-      );
-      const deniedMenus = userMenus.map((item) => item.id.toString());
+      const deniedMenus = userDeniedMenus.map((item) => item.id.toString());
       this.userDeniedMenuIds = new Set(deniedMenus);
       // 构建树
       this.buildMenuTree();
@@ -107,8 +112,8 @@ export class UserPermissionComponent {
         .map((item) => item.id.toString())
         .filter((item) => !this.userDeniedMenuIds.has(item));
 
-      // 3. 获取所有 API
-      this.allApis = await firstValueFrom(this.userService.getApisByUserId(this.data.user.id));
+      // 根据角色获取的 API 列表
+      this.allApis = roleApis;
 
       const apiGroups = this.allApis.reduce((groups, api) => {
         let group = groups.find((g: ApiGroup) => g.name === api.apiGroup);
@@ -127,14 +132,12 @@ export class UserPermissionComponent {
           title: api.description,
           key: api.id.toString(),
           data: { url: api.url, description: api.description },
+          isLeaf: true,
         })),
       }));
 
-      // 4. 获取用户被禁用的 API
-      const userApis = await firstValueFrom(
-        this.userService.getApiPermissionByUserId(this.data.user.id),
-      );
-      const deniedApis = userApis.map((item) => item.id.toString());
+      // 用户被禁用的 API
+      const deniedApis = userDeniedApis.map((item) => item.id.toString());
       this.userDeniedApiIds = new Set(deniedApis);
 
       this.checkedApiKeys = this.allApis

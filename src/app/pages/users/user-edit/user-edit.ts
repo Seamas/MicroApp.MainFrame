@@ -101,7 +101,7 @@ export class UserEditFormComponent {
         } else {
           res = await firstValueFrom(this.userService.createUser(username, nickname, email));
         }
-        if (res) {
+        if (res === true) {
           this.modalRef.close(this.form.value);
         } else {
           this.msg.error('操作失败');

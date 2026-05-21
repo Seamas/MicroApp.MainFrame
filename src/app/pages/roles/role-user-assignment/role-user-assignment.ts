@@ -52,14 +52,18 @@ export class RoleUserAssignmentComponent implements OnInit {
   private async loadUsers() {
     this.loading = true;
     try {
-      this.allUsers = await firstValueFrom(this.userService.getAllUsers());
-      this.assignedUsers = await firstValueFrom(this.roleService.getUsersByRoleId(this.roleId));
+        const [allUsers, assignedUsers] = await Promise.all([
+          firstValueFrom(this.userService.getAllUsers()),
+          firstValueFrom(this.roleService.getUsersByRoleId(this.roleId)),
+        ]);
+        this.allUsers = allUsers;
+        this.assignedUsers = assignedUsers;
 
-      this.applyAllSearch();
-      this.applyAssignedSearch();
+        this.applyAllSearch();
+        this.applyAssignedSearch();
     } finally {
-      this.loading = false;
-      this.cdr.detectChanges();
+        this.loading = false;
+        this.cdr.detectChanges();
     }
   }
 
@@ -103,7 +107,7 @@ export class RoleUserAssignmentComponent implements OnInit {
     );
     this.assignedUsers = this.assignedUsers.filter((u) => !toRemove.has(u.id));
     this.selectedAssignedUserIds.clear();
-    this.applyAllSearch();
+    this.applyAssignedSearch();
   }
 
   addAllUsers(): void {
@@ -119,6 +123,25 @@ export class RoleUserAssignmentComponent implements OnInit {
     this.selectedAssignedUserIds.clear();
     this.applyAssignedSearch();
   }
+
+  leftListClick(id: number) {
+    if (this.selectedAllUserIds.has(id)) {
+      this.selectedAllUserIds.delete(id);
+    } else {
+      this.selectedAllUserIds.add(id);
+    }
+  }
+
+
+  rightListClick(id: number) {
+    if (this.selectedAssignedUserIds.has(id)) {
+      this.selectedAssignedUserIds.delete(id);
+    } else {
+      this.selectedAssignedUserIds.add(id);
+    }
+
+  }
+
 
   // ========== 保存 ==========
   async save() {

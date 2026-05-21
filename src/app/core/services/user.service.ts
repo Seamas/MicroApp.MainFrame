@@ -44,31 +44,31 @@ export class UserService {
     return this.http.post<boolean>('/api/rbac/users/check-username', { id, username });
   }
 
-  assignRoles(userId: number, roleIds: number[]): Observable<boolean> {
-    return this.http.post<boolean>('/api/rbac/users/assign-roles', { userId, roleIds });
+  assignRoles(id: number, roleIds: number[]): Observable<boolean> {
+    return this.http.post<boolean>('/api/rbac/users/assign-roles', { id, roleIds });
   }
 
   getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>('/api/rbac/users/all-users');
   }
 
-  getRoleByUserId(userId: number): Observable<Role[]> {
-    return this.http.post<Role[]>('/api/rbac/users/get-roles-by-user', { userId });
+  getRoleByUserId(id: number): Observable<Role[]> {
+    return this.http.post<Role[]>('/api/rbac/users/get-roles-by-user', { id });
   }
 
-  getMenusByUserId(userId: number): Observable<Menu[]> {
-    return this.http.post<Menu[]>('/api/rbac/users/get-menus-by-user', { userId });
+  getMenusByUserId(id: number): Observable<Menu[]> {
+    return this.http.post<Menu[]>('/api/rbac/users/get-menus-by-user', { id });
   }
 
-  getMenuPermissionByUserId(userId: number): Observable<Menu[]> {
-    return this.http.post<Menu[]>('/api/rbac/users/get-menu-permissions-by-user', { userId });
+  getMenuPermissionByUserId(id: number): Observable<Menu[]> {
+    return this.http.post<Menu[]>('/api/rbac/users/get-menu-permissions-by-user', { id });
   }
 
-  getApisByUserId(userId: number): Observable<ApiEndpoint[]> {
-    return this.http.post<ApiEndpoint[]>('/api/rbac/users/get-apis-by-user', { userId });
+  getApisByUserId(id: number): Observable<ApiEndpoint[]> {
+    return this.http.post<ApiEndpoint[]>('/api/rbac/users/get-apis-by-user', { id });
   }
 
-  getApiPermissionByUserId(userId: number): Observable<ApiEndpoint[]> {
-    return this.http.post<ApiEndpoint[]>('/api/rbac/users/get-api-permissions-by-user', { userId });
+  getApiPermissionByUserId(id: number): Observable<ApiEndpoint[]> {
+    return this.http.post<ApiEndpoint[]>('/api/rbac/users/get-api-permissions-by-user', { id });
   }
 }
