@@ -8,6 +8,7 @@ export function removeUserInfo() {
   localStorage.removeItem('username');
   localStorage.removeItem('token');
   localStorage.removeItem('nickname');
+  sessionStorage.removeItem('user_visible_menus');
 }
 
 export function getUsername() {
