@@ -5,6 +5,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { removeUserInfo } from '../stores/userstore';
+import { PermissionService } from '../services/permission.service';
 
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
   const messageService = inject(NzMessageService);
@@ -49,6 +50,7 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
       } else if (error.status === 0) {
         errorMsg = '无法连接到服务器';
       } else if (error.status === 401) {
+        inject(PermissionService).clearMenuCache();
         removeUserInfo();
         errorMsg = '未授权，请重新登录';
       } else if (error.status == 403) {

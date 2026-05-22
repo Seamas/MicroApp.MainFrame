@@ -4,6 +4,7 @@ export interface Menu {
   code: string;
   icon?: string;
   path?: string;
+  microAppUrl?: string;
   parentId?: number;
   sortOrder: number;
   isEnabled: boolean;

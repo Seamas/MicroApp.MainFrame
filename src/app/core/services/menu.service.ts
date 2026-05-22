@@ -10,6 +10,7 @@ interface MenuDto {
   name: string;
   code: string;
   path?: string;
+  microAppUrl?: string;
   parentId?: number;
   sortOrder: number;
 }

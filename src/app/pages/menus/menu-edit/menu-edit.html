@@ -26,6 +26,18 @@
     </nz-form-control>
   </nz-form-item>
 
+  @if (form.get('code')?.value === 'microapp') {
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6" nzFor="microAppUrl">微应用地址</nz-form-label>
+      <nz-form-control [nzSpan]="14">
+        <input nz-input formControlName="microAppUrl" placeholder="如 http://domain/subapp1/route1 或者 /subapp1/route1"/>
+        <div class="form-hint">
+          不带http开头的地址会自动拼接当前域名，如输入/subapp1/route1会被解析为http://当前域名/subapp1/route1
+        </div>
+      </nz-form-control>
+    </nz-form-item>
+  }
+
   <nz-form-item>
         <nz-form-label [nzSpan]="6" nzFor="parentId" nzRequired>上级菜单</nz-form-label>
         <nz-form-control [nzSpan]="14">

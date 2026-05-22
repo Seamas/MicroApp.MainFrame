@@ -1,73 +1,11 @@
-import { Routes, Router, UrlTree } from '@angular/router';
-import { inject } from '@angular/core';
+import { Routes } from '@angular/router';
 
 import { LoginComponent } from './pages/auth/login/login';
 import { LayoutComponent } from './layouts/layout/layout';
 import { RegisterComponent } from './pages/auth/register/register';
 import { ChangepwdComponent } from './pages/user/changepwd/changepwd';
 import { ProfileComponent } from './pages/user/profile/profile';
-import { PermissionService } from './core/services/permission.service';
-import { firstValueFrom } from 'rxjs';
-import { Menu } from './core/models/requests/menu.model';
-
-const authGuard = (): boolean | UrlTree => {
-  const isLoggedIn = localStorage.getItem('token') !== null;  
-  const router = inject(Router);
-
-  if (isLoggedIn) {
-    return router.parseUrl('/');
-  }
-
-  return true;
-};
-
-const mainGuard = (): boolean | UrlTree => {
-  const isLoggedIn = localStorage.getItem('token') !== null;  
-  const router = inject(Router);
-  if (!isLoggedIn) {
-    return router.parseUrl('/login');
-  }
-  return true;
-};
-
-const ALLOWED_PATHS_WITHOUT_MENU = ['changePwd', 'profile'];
-
-const menuGuard = async (): Promise<boolean | UrlTree> => {
-  const router = inject(Router);
-  const permissionService = inject(PermissionService);
-
-  const targetPath = router.getCurrentNavigation()?.finalUrl?.toString();
-  if (!targetPath) {
-    return true;
-  }
-
-  const segments = targetPath.split('/').filter(Boolean);
-  const firstSegment = segments[0] || '';
-
-  if (ALLOWED_PATHS_WITHOUT_MENU.includes(firstSegment)) {
-    return true;
-  }
-
-  let menus: Menu[];
-  try {
-    menus = await firstValueFrom(permissionService.getUserVisibleMenus());
-  } catch {
-    return router.parseUrl('/');
-  }
-
-  const allowedPaths = menus
-    .filter((m) => m.path)
-    .map((m) => m.path!.replace(/^\//, '').split('/')[0])
-    .filter(Boolean);
-
-  const uniqueAllowed = [...new Set(allowedPaths)];
-
-  if (uniqueAllowed.includes(firstSegment)) {
-    return true;
-  }
-
-  return router.parseUrl('/');
-};
+import { authGuard, mainGuard, menuGuard } from './core/guards/route.guards';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [authGuard] },

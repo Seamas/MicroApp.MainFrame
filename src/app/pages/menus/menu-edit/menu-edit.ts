@@ -85,6 +85,7 @@ export class MenuEditComponent implements OnInit {
         },
       ],
       path: [data?.menu?.path || '', { validators: [this.pathValidator()] }],
+      microAppUrl: [data?.menu?.microAppUrl || ''],
       parentId: [data?.menu?.parentId || -1, { validators: [Validators.required] }],
       sortOrder: [
         data?.menu?.sortOrder || 0,
@@ -133,7 +134,7 @@ export class MenuEditComponent implements OnInit {
 
     if (this.form.valid) {
       try {
-        const { name, code, path, parentId, sortOrder } = this.form.value;
+        const { name, code, path, microAppUrl, parentId, sortOrder } = this.form.value;
         let res: boolean = false;
         if (this.isEdit) {
           res = await firstValueFrom(
@@ -142,13 +143,14 @@ export class MenuEditComponent implements OnInit {
               name,
               code,
               path,
+              microAppUrl,
               parentId,
               sortOrder,
             }),
           );
         } else {
           res = await firstValueFrom(
-            this.menuService.createMenu({ name, code, path, parentId, sortOrder }),
+            this.menuService.createMenu({ name, code, path, microAppUrl, parentId, sortOrder }),
           );
         }
         if (res === true) {

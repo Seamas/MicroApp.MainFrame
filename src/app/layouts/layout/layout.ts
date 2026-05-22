@@ -1,15 +1,11 @@
 import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
-  ViewChild,
-  ElementRef,
-  AfterViewInit,
   OnDestroy,
-  Renderer2,
   OnInit,
   ChangeDetectorRef,
 } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, Route } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -17,12 +13,13 @@ import { removeUserInfo } from '../../core/stores/userstore';
 import { AuthService } from '../../core/services/auth.service';
 
 import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
-import { finalize, firstValueFrom } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { MenuDto } from '../../core/models/menu-dto.model';
 
 import { MenuComponent } from '../menu/menu';
 import { PermissionService } from '../../core/services/permission.service';
 import { Menu } from '../../core/models/requests/menu.model';
+import { menuGuard } from '../../core/guards/route.guards';
 
 @Component({
   selector: 'app-layout',
@@ -39,22 +36,13 @@ import { Menu } from '../../core/models/requests/menu.model';
   styleUrl: './layout.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class LayoutComponent implements AfterViewInit, OnDestroy, OnInit {
-  @ViewChild('microapp', { static: true }) container!: ElementRef;
-
+export class LayoutComponent implements OnDestroy, OnInit {
   isCollapsed = false;
-
-  subappUrl: string = `${window.location.origin}`;
-
-  private microAppElement: any;
   appName: string = '';
-  isMicroapp: boolean = false;
-
   menus: MenuDto[] = [];
 
   constructor(
     private router: Router,
-    private renderer: Renderer2,
     public authService: AuthService,
     private permissionService: PermissionService,
     private cdr: ChangeDetectorRef,
@@ -65,9 +53,48 @@ export class LayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     try {
       const allMenus = await firstValueFrom(this.permissionService.getUserVisibleMenus());
       this.menus = this.buildMenuTree(allMenus);
+      this.registerMicroAppRoutes(allMenus);
     } finally {
       this.cdr.detectChanges();
     }
+  }
+
+  private registerMicroAppRoutes(menus: Menu[]): void {
+    const microAppMenus = menus.filter(
+      (m) => m.code === 'microapp' && m.path,
+    );
+    if (microAppMenus.length === 0) return;
+
+    const layoutRoute = this.router.config.find(
+      (r) => r.component === LayoutComponent,
+    );
+    if (!layoutRoute || !layoutRoute.children) return;
+
+    const existingPaths = new Set(layoutRoute.children.map((r) => r.path));
+
+    for (const menu of microAppMenus) {
+      const path = menu.path!.replace(/^\//, '');
+      if (!path || existingPaths.has(path)) continue;
+
+      const microAppUrl =  menu.microAppUrl?.startsWith('http') ? menu.microAppUrl : ( menu.microAppUrl?.startsWith('/') ? `${window.location.origin}${menu.microAppUrl}` : `${window.location.origin}/${path}`);
+
+      layoutRoute.children.push({
+        path,
+        loadComponent: () =>
+          import('../microapp-container/microapp-container').then(
+            (m) => m.MicroAppContainerComponent,
+          ),
+        data: {
+          microAppUrl,
+          microAppName: path,
+        },
+        canActivate: [menuGuard],
+      });
+
+      existingPaths.add(path);
+    }
+
+    this.router.resetConfig(this.router.config);
   }
 
   private buildMenuTree(menus: Menu[]): MenuDto[] {
@@ -106,77 +133,29 @@ export class LayoutComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   onMenuSelect(menu: MenuDto): void {
-    this.destroyMicroApp();
-
-    if (menu.type == 'router') {
-      this.isMicroapp = false;
+    if (menu.type === 'router' || menu.type === 'microapp') {
       this.router.navigate([menu.url || '/']);
-    } else if (menu.type == 'microapp') {
-      this.isMicroapp = true;
-    } else {
-      console.log('menu.type is not supported: ', menu.type);
     }
   }
 
   goToProfile() {
-    this.resetRouterOutlet();
     this.router.navigate(['/profile']);
   }
 
   changePassword() {
-    this.resetRouterOutlet();
     this.router.navigate(['/changePwd']);
-  }
-
-  // 重置router-outlet
-  resetRouterOutlet() {
-    this.destroyMicroApp();
-    this.isMicroapp = false;
   }
 
   async logout() {
     try {
       await firstValueFrom(this.authService.logout());
     } catch (error) {
-      console.log(error);
+      // ignore
     }
+    this.permissionService.clearMenuCache();
     removeUserInfo();
     this.router.navigate(['/login']);
   }
 
-  createMicroApp(url: string, name: string = 'dynamic-app') {
-    // 清理现有元素
-    this.destroyMicroApp();
-    // 创建新的 micro-app 元素
-    this.microAppElement = this.renderer.createElement('micro-app');
-
-    // 设置属性
-    this.renderer.setAttribute(this.microAppElement, 'name', name);
-    this.renderer.setAttribute(this.microAppElement, 'url', url);
-    this.renderer.setAttribute(
-      this.microAppElement,
-      'data',
-      JSON.stringify({
-        // 传递数据
-      }),
-    );
-
-    // 添加到 DOM
-    this.renderer.appendChild(this.container.nativeElement, this.microAppElement);
-  }
-
-  destroyMicroApp() {
-    if (this.microAppElement) {
-      this.renderer.removeChild(this.container.nativeElement, this.microAppElement);
-      this.microAppElement = null;
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.destroyMicroApp();
-  }
-
-  ngAfterViewInit(): void {
-    // this.createMicroApp();
-  }
+  ngOnDestroy(): void {}
 }
