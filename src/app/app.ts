@@ -10,7 +10,7 @@ import { AppConfigService } from './core/services/appconfig.service';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
-  selector: 'app-root',
+  selector: 'main-app-root',
   standalone: true,
   imports: [RouterOutlet, NzIconModule, NzLayoutModule, NzMenuModule],
   templateUrl: './app.html',

@@ -76,10 +76,14 @@ export class LayoutComponent implements OnDestroy, OnInit {
       const path = menu.path!.replace(/^\//, '');
       if (!path || existingPaths.has(path)) continue;
 
-      const microAppUrl =  menu.microAppUrl?.startsWith('http') ? menu.microAppUrl : ( menu.microAppUrl?.startsWith('/') ? `${window.location.origin}${menu.microAppUrl}` : `${window.location.origin}/${path}`);
+      const microAppUrl = menu.microAppUrl?.startsWith('http')
+        ? menu.microAppUrl
+        : menu.microAppUrl?.startsWith('/')
+          ? `${window.location.origin}${menu.microAppUrl}`
+          : `${window.location.origin}/${path}`;
 
-      layoutRoute.children.push({
-        path,
+      const childRoute: Route = {
+        path: '**',
         loadComponent: () =>
           import('../microapp-container/microapp-container').then(
             (m) => m.MicroAppContainerComponent,
@@ -88,6 +92,11 @@ export class LayoutComponent implements OnDestroy, OnInit {
           microAppUrl,
           microAppName: path,
         },
+      };
+
+      layoutRoute.children.push({
+        path,
+        children: [childRoute],
         canActivate: [menuGuard],
       });
 

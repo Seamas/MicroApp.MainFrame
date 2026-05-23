@@ -1,8 +1,8 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { NzMenuModule, NzMenuThemeType } from 'ng-zorro-antd/menu';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-
+import { Subject, takeUntil } from 'rxjs';
 import { MenuDto } from '../../core/models/menu-dto.model';
 
 @Component({
@@ -12,31 +12,41 @@ import { MenuDto } from '../../core/models/menu-dto.model';
   templateUrl: './menu.html',
   styleUrl: './menu.scss',
 })
-export class MenuComponent {
+export class MenuComponent implements OnInit, OnDestroy {
   @Input() menus: MenuDto[] = [];
   @Input() isCollapsed = false;
   @Output() menuSelect = new EventEmitter<MenuDto>();
-
   @Input() theme: NzMenuThemeType = 'light';
 
-  expandedKeys = new Set<string>();
+  selectedUrl: string = '';
+
+  private destroy$ = new Subject<void>();
+
+  constructor(private router: Router) {}
+
+  ngOnInit(): void {
+    this.selectedUrl = this.router.url;
+
+    this.router.events.pipe(takeUntil(this.destroy$)).subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.selectedUrl = event.urlAfterRedirects;
+      }
+    });
+  }
+
+  isSelected(menu: MenuDto): boolean {
+    if (!menu.url) return false;
+    return this.selectedUrl === menu.url || this.selectedUrl.startsWith(menu.url + '/');
+  }
 
   selectItem(menu: MenuDto): void {
     if (!menu.children || menu.children.length === 0) {
       this.menuSelect.emit(menu);
     }
-    // 如果有子菜单，NG-ZORRO 会自动展开，无需 emit（除非你需要额外逻辑）
   }
 
-  toggleSubmenu(item: MenuDto, isOpen: boolean): void {
-    if (isOpen) {
-      this.expandedKeys.add(item.name); // 或 item.key（建议用唯一 ID）
-    } else {
-      this.expandedKeys.delete(item.name);
-    }
-  }
-
-  getSubmenuIcon(item: MenuDto): string {
-    return this.expandedKeys.has(item.name) ? 'menu-unfold' : 'menu-fold';
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

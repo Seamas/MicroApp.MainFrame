@@ -4,12 +4,12 @@
       <li
         nz-submenu
         [nzTitle]="item.name"
-        [nzIcon]="getSubmenuIcon(item)"
-        (nzOpenChange)="toggleSubmenu(item, $event)"
+        [nzIcon]="item.icon || 'menu-fold'"
+        nzOpen
       >
         <ul>
           @for (child of item.children; track child.name) {
-            <li nz-menu-item (click)="selectItem(child)">
+            <li nz-menu-item (click)="selectItem(child)" [nzSelected]="isSelected(child)">
               <i nz-icon [nzType]="child.icon!"></i>
               <span>{{ child.name }}</span>
             </li>
@@ -17,7 +17,7 @@
         </ul>
       </li>
     } @else {
-      <li nz-menu-item (click)="selectItem(item)">
+      <li nz-menu-item (click)="selectItem(item)" [nzSelected]="isSelected(item)">
         <i nz-icon [nzType]="item.icon!"></i>
         <span>{{ item.name }}</span>
       </li>
