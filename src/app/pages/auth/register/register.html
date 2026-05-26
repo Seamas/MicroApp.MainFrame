@@ -1,5 +1,5 @@
-<div class="register-container">
-  <div class="register-form">
+<div class="auth-container">
+  <div class="auth-card">
     <h2>用户注册</h2>
 
     @if (errorMessage) {
@@ -52,8 +52,10 @@
       <button
         nz-button
         nzType="primary"
+        nzSize="large"
+        nzBlock
+        class="auth-button"
         [disabled]="!validateForm.valid"
-        class="register-button"
         type="submit"
       >
         注册

@@ -1,14 +1,353 @@
 // src/styles.scss
 
-// 自定义主色
+// ============================================
+// CSS Custom Properties
+// ============================================
 :root {
-  --ant-primary-color: #4096ee; // 主色
-  --ant-primary-color-hover: #5ca9f0; // hover
-  --ant-primary-color-active: #3585d9; // active
-  --ant-primary-color-outline: rgba(64, 150, 238, 0.2); // focus outline
+  --ant-primary-color: #4096ee;
+  --ant-primary-color-hover: #5ca9f0;
+  --ant-primary-color-active: #3585d9;
+  --ant-primary-color-outline: rgba(64, 150, 238, 0.2);
 }
 
-// 可选：覆盖其他颜色
-// --ant-success-color: #52c41a;
-// --ant-error-color: #f56c6c;
-// --ant-warning-color: #faad14;
+// ============================================
+// Page outer container (management pages)
+// ============================================
+.outer-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #f0f2f5;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+// ============================================
+// Search bar (management pages)
+// ============================================
+.search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 4px;
+  margin-bottom: 20px;
+
+  .search-fields {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1;
+    min-width: 0;
+    gap: 16px;
+  }
+
+  .search-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  nz-form-item {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    nz-form-label {
+      margin: 0;
+      font-weight: normal;
+      color: rgba(0, 0, 0, 0.85);
+      white-space: nowrap;
+    }
+
+    nz-form-control {
+      width: 180px;
+      margin: 0;
+    }
+  }
+}
+
+// ============================================
+// Toolbar (management pages)
+// ============================================
+.toolbar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  gap: 16px;
+
+  h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #1d1d1d;
+  }
+}
+
+// ============================================
+// Table & pagination wrapper (management pages)
+// ============================================
+.table-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table-container {
+  flex: 1;
+  min-height: 0;
+  padding: 20px;
+  padding-bottom: 0;
+}
+
+.pagination-wrapper {
+  padding: 20px;
+  border-top: 1px solid #f0f0f0;
+  background: #fff;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-height: 64px;
+}
+
+// ============================================
+// Action buttons in table rows
+// ============================================
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+  }
+
+  button {
+    white-space: nowrap;
+  }
+}
+
+// ============================================
+// Global table height fix
+// ============================================
+.ant-table-wrapper {
+  height: 100%;
+
+  .ant-spin-nested-loading {
+    height: 100%;
+
+    .ant-spin-container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+
+      .ant-table {
+        flex: 1;
+
+        .ant-table-container {
+          height: 100%;
+
+          .ant-table-body {
+            max-height: calc(100vh - 440px) !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// Modal edit form (improved styling)
+// ============================================
+.edit-form {
+  padding: 8px 0;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.form-hint {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+// ============================================
+// Permission toolbar
+// ============================================
+.permission-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 16px;
+}
+
+.permission-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+// ============================================
+// Assignment / transfer panels
+// ============================================
+.assignment-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 16px;
+}
+
+.role-transfer,
+.user-transfer {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+}
+
+.transfer-panel {
+  flex: 1;
+  min-width: 280px;
+}
+
+.panel-header {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.transfer-operations {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 8px;
+
+  button {
+    width: 40px;
+    height: 32px;
+    font-weight: bold;
+  }
+}
+
+// selected item highlight in transfer lists
+.ant-list-item.selected {
+  background-color: #e6f7ff;
+  border-left: 3px solid #1890ff;
+}
+
+nz-list {
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  max-height: 400px;
+  overflow: auto;
+}
+
+// ============================================
+// Permission tree & API list (common)
+// ============================================
+.api-list {
+  padding: 12px;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+.api-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  width: 100%;
+  cursor: pointer;
+
+  .api-info {
+    margin-left: 8px;
+    flex: 1;
+  }
+}
+
+.api-group {
+  margin-bottom: 24px;
+}
+
+nz-alert {
+  margin-bottom: 16px;
+}
+
+nz-tree {
+  padding: 12px;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+}
+
+// ============================================
+// Auth pages (login / register)
+// ============================================
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 32px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    text-align: center;
+    margin-bottom: 32px;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+    font-size: 14px;
+
+    a {
+      color: #4096ee;
+      cursor: pointer;
+      margin-left: 4px;
+      transition: color 0.3s;
+
+      &:hover {
+        color: #3585d9;
+      }
+    }
+  }
+}
+
+.auth-button {
+  width: 100%;
+  margin-top: 24px;
+  height: 40px;
+  font-size: 16px;
+}
