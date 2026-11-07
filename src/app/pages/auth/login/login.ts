@@ -6,6 +6,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { AuthService } from '../../../core/services/auth.service';
+import { PermissionService } from '../../../core/services/permission.service';
 import { setUser } from '../../../core/stores/userstore';
 import { firstValueFrom } from 'rxjs';
 
@@ -24,6 +25,7 @@ export class LoginComponent {
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService,
+    private permissionService: PermissionService,
   ) {
     this.validateForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
@@ -38,6 +40,7 @@ export class LoginComponent {
         const res = await firstValueFrom(this.authService.login({ username, password }));
         setUser(res.username, res.token, res.nickname);
         this.authService.nickname = res.nickname;
+        this.permissionService.clearMenuCache();
         this.router.navigate(['/']);
       } catch (err: any) {
         this.errorMessage = err.message || '登录失败，请检查用户名和密码';

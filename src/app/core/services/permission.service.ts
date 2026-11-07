@@ -24,11 +24,15 @@ export class PermissionService {
   constructor(private http: HttpClient) {}
 
   setRolePermissions(dto: RolePermissionDto): Observable<boolean> {
-    return this.http.post<boolean>('/api/rbac/permissions/set-role-permissions', dto);
+    return this.http
+      .post<boolean>('/api/rbac/permissions/set-role-permissions', dto)
+      .pipe(tap((res) => res && this.clearMenuCache()));
   }
 
   setUserPermissions(dto: UserPermissionDto): Observable<boolean> {
-    return this.http.post<boolean>('/api/rbac/permissions/set-user-permissions', dto);
+    return this.http
+      .post<boolean>('/api/rbac/permissions/set-user-permissions', dto)
+      .pipe(tap((res) => res && this.clearMenuCache()));
   }
 
   getUserVisibleMenus(): Observable<Menu[]> {
