@@ -169,11 +169,16 @@ export class RoleManagementComponent implements OnInit {
       } else {
         res = await firstValueFrom(this.roleService.disable(role.id));
       }
-      const message = newValue ? '角色启用成功' : '角色禁用成功';
-      role.isEnabled = newValue;
-      this.message.success(message, {
-        nzDuration: 3000,
-      });
+      if (res === true) {
+        const message = newValue ? '角色启用成功' : '角色禁用成功';
+        role.isEnabled = newValue;
+        this.message.success(message, {
+          nzDuration: 3000,
+        });
+      } else {
+        role.isEnabled = originalValue;
+        this.message.error('操作失败');
+      }
     } catch (error) {
       role.isEnabled = originalValue;
       this.message.error('操作失败');
@@ -188,8 +193,12 @@ export class RoleManagementComponent implements OnInit {
       nzOnOk: async () => {
         try {
           const res = await firstValueFrom(this.roleService.delete(role.id));
-          this.message.success('角色删除成功');
-          this.loadRoles();
+          if (res === true) {
+            this.message.success('角色删除成功');
+            this.loadRoles();
+          } else {
+            this.message.error('删除角色失败');
+          }
         } catch (error) {
           this.message.error('删除角色失败');
         }

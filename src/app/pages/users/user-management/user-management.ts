@@ -170,11 +170,16 @@ export class UserManagementComponent implements OnInit {
       } else {
         res = await firstValueFrom(this.userService.disable(user.id));
       }
-      const message = newValue ? '用户启用成功' : '用户禁用成功';
-      user.isEnabled = newValue;
-      this.msg.success(message, {
-        nzDuration: 3000,
-      });
+      if (res === true) {
+        const message = newValue ? '用户启用成功' : '用户禁用成功';
+        user.isEnabled = newValue;
+        this.msg.success(message, {
+          nzDuration: 3000,
+        });
+      } else {
+        user.isEnabled = originalValue;
+        this.msg.error('操作失败');
+      }
     } catch (error) {
       user.isEnabled = originalValue;
       this.msg.error('操作失败');
@@ -192,6 +197,8 @@ export class UserManagementComponent implements OnInit {
           const res = await firstValueFrom(this.userService.resetPassword(user.id));
           if (res === true) {
             this.msg.success(`${user.nickname} 密码重置成功, 请及时进行修改`);
+          } else {
+            this.msg.error(`${user.nickname} 密码重置失败`);
           }
         } catch (error) {
           this.msg.error(`${user.nickname} 密码重置失败`);

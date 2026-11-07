@@ -143,11 +143,16 @@ export class ApiManagementComponent implements OnInit {
       } else {
         res = await firstValueFrom(this.endpointService.disableApiEndpoint(menu.id!));
       }
-      const message = newValue ? 'API端点启用成功' : 'API端点禁用成功';
-      menu.isEnabled = newValue;
-      this.msg.success(message, {
-        nzDuration: 3000,
-      });
+      if (res === true) {
+        const message = newValue ? 'API端点启用成功' : 'API端点禁用成功';
+        menu.isEnabled = newValue;
+        this.msg.success(message, {
+          nzDuration: 3000,
+        });
+      } else {
+        menu.isEnabled = originalValue;
+        this.msg.error('操作失败');
+      }
     } catch (error) {
       menu.isEnabled = originalValue;
 

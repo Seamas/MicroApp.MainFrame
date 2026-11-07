@@ -160,11 +160,16 @@ export class MenuManagementComponent implements OnInit {
       } else {
         res = await firstValueFrom(this.menuService.disable(menu.id!));
       }
-      const message = newValue ? '菜单启用成功' : '菜单禁用成功';
-      menu.isEnabled = newValue;
-      this.msg.success(message, {
-        nzDuration: 3000,
-      });
+      if (res === true) {
+        const message = newValue ? '菜单启用成功' : '菜单禁用成功';
+        menu.isEnabled = newValue;
+        this.msg.success(message, {
+          nzDuration: 3000,
+        });
+      } else {
+        menu.isEnabled = originalValue;
+        this.msg.error('操作失败');
+      }
     } catch (error) {
       menu.isEnabled = originalValue;
       this.msg.error('操作失败');
