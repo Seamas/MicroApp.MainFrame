@@ -1,10 +1,8 @@
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, DestroyRef, Inject, OnInit } from '@angular/core';
 import {
   AbstractControl,
-  AsyncValidatorFn,
   FormBuilder,
   FormGroup,
-  NgModel,
   ReactiveFormsModule,
   ValidationErrors,
   Validators,
@@ -18,17 +16,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 
-import {
-  catchError,
-  debounceTime,
-  distinctUntilChanged,
-  first,
-  firstValueFrom,
-  map,
-  Observable,
-  of,
-  switchMap,
-} from 'rxjs';
+import { firstValueFrom } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { Menu } from '../../../core/models/requests/menu.model';
 import { MenuService } from '../../../core/services/menu.service';
@@ -72,6 +61,7 @@ export class MenuEditComponent implements OnInit {
     private menuService: MenuService,
     private msg: NzMessageService,
     private formErrorService: FormErrorService,
+    private destroyRef: DestroyRef,
   ) {
     this.form = this.fb.group({
       name: [
@@ -108,7 +98,16 @@ export class MenuEditComponent implements OnInit {
     ];
   }
 
-  async ngOnInit() {}
+  async ngOnInit() {
+    this.form
+      .get('code')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.form.get('path')?.updateValueAndValidity();
+      });
+
+    this.form.get('path')?.updateValueAndValidity();
+  }
 
   pathValidator() {
     return (control: AbstractControl): ValidationErrors | null => {

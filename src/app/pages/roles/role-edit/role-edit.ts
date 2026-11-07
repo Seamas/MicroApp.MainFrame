@@ -75,8 +75,8 @@ export class RoleEditComponent implements OnInit {
           validators: [
             Validators.required,
             Validators.minLength(2),
-            Validators.maxLength(50),
-            Validators.pattern(/^[a-zA-Z0-9_\-\s]+$/),
+            Validators.maxLength(30),
+            Validators.pattern(/^[a-zA-Z0-9_-]+$/),
           ],
           asyncValidators: [this.uniqueCodeValidator()],
           updateOn: 'blur',
