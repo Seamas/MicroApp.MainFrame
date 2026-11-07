@@ -51,6 +51,7 @@ export class RolePermissionComponent implements OnInit {
   // ===== 菜单权限 =====
   menuTree: NzTreeNodeOptions[] = [];
   checkedMenuIds: string[] = [];
+  private leafMenuIds = new Set<string>();
 
 
   // ===== API 权限 =====
@@ -97,7 +98,14 @@ export class RolePermissionComponent implements OnInit {
   }
 
   private makeMenus(allMenus: Menu[], grantedMenus: Menu[]) {
-    this.checkedMenuIds = grantedMenus.map((item) => item.id.toString());
+    this.leafMenuIds = new Set(
+      allMenus
+        .filter((menu) => !allMenus.some((child) => child.parentId === menu.id))
+        .map((menu) => menu.id.toString()),
+    );
+    this.checkedMenuIds = grantedMenus
+      .map((item) => item.id.toString())
+      .filter((id) => this.leafMenuIds.has(id));
     this.menuTree = this.buildMenuTree(allMenus);
   }
 
@@ -176,7 +184,9 @@ export class RolePermissionComponent implements OnInit {
 
   // ===== 保存 =====
   async save() {
-    const menuIds = this.checkedMenuIds.map((item) => parseInt(item));
+    const menuIds = this.checkedMenuIds
+      .filter((item) => this.leafMenuIds.has(item))
+      .map((item) => parseInt(item));
     const apiIds = this.checkedApiIds
       .filter((item) => !item.startsWith('group_'))
       .map((item) => parseInt(item));
@@ -191,6 +201,7 @@ export class RolePermissionComponent implements OnInit {
       );
       if (res === true) {
         this.msg.success('角色权限已保存');
+        this.modalRef.close(true);
       } else {
         this.msg.error('角色权限保存失败');
       }

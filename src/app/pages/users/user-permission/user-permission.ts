@@ -90,8 +90,7 @@ export class UserPermissionComponent {
       // 构建树
       this.buildMenuTree();
 
-      this.checkedMenuKeys = this.allMenus
-        .map((item) => item.id.toString())
+      this.checkedMenuKeys = this.getLeafMenuIds()
         .filter((item) => !this.userDeniedMenuIds.has(item));
 
       // 根据角色获取的 API 列表
@@ -159,8 +158,14 @@ export class UserPermissionComponent {
     this.menuTree = roots;
   }
 
+  private getLeafMenuIds(): string[] {
+    return this.allMenus
+      .filter((menu) => !this.allMenus.some((child) => child.parentId === menu.id))
+      .map((menu) => menu.id.toString());
+  }
+
   resetMenuPermissions() {
-    this.checkedMenuKeys = this.allMenus.map((item) => item.id.toString());
+    this.checkedMenuKeys = this.getLeafMenuIds();
   }
 
   resetApiPermissions() {
@@ -171,8 +176,7 @@ export class UserPermissionComponent {
     const checkedMenus = new Set<string>(this.checkedMenuKeys);
     const checkedApis = new Set<string>(this.checkedApiKeys);
 
-    const deniedMenus = this.allMenus
-      .map((item) => item.id.toString())
+    const deniedMenus = this.getLeafMenuIds()
       .filter((item) => !checkedMenus.has(item))
       .map((item) => parseInt(item));
 
@@ -193,6 +197,7 @@ export class UserPermissionComponent {
 
       if (res === true) {
         this.msg.success('权限配置保存成功');
+        this.modalRef.close(true);
       } else {
         this.msg.error('权限配置保存失败');
       }
