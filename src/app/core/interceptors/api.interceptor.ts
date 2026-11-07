@@ -9,6 +9,7 @@ import { PermissionService } from '../services/permission.service';
 
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
   const messageService = inject(NzMessageService);
+  const permissionService = inject(PermissionService);
   let clonedReq = req;
   if (req.body !== null && req.body !== undefined && !(req.body instanceof FormData)) {
     clonedReq = req.clone({
@@ -38,7 +39,7 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
             }
 
             if (apiResult.code === 401) {
-              inject(PermissionService).clearMenuCache();
+              permissionService.clearMenuCache();
               removeUserInfo();
             }
 
@@ -55,7 +56,7 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
       } else if (error.status === 0) {
         errorMsg = '无法连接到服务器';
       } else if (error.status === 401) {
-        inject(PermissionService).clearMenuCache();
+        permissionService.clearMenuCache();
         removeUserInfo();
         errorMsg = '未授权，请重新登录';
       } else if (error.status == 403) {
