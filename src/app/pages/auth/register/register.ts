@@ -1,14 +1,12 @@
 // src/app/auth/register/register.ts
-import { Component, DestroyRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   Validators,
   ReactiveFormsModule,
   AbstractControlOptions,
-  AsyncValidatorFn,
   AbstractControl,
-  ValidationErrors,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -17,19 +15,6 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { AuthService } from '../../../core/services/auth.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import {
-  catchError,
-  debounceTime,
-  distinctUntilChanged,
-  first,
-  map,
-  Observable,
-  of,
-  switchMap,
-} from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UserService } from '../../../core/services/user.service';
-import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @Component({
   selector: 'app-register',
@@ -40,7 +25,6 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
     NzInputModule,
     NzButtonModule,
     NzAlertModule,
-    NzSpinModule,
   ],
   templateUrl: './register.html',
   styleUrls: ['./register.scss'],
@@ -49,7 +33,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
   validateForm!: FormGroup;
   errorMessage: string | null = null;
 
-  validatingUsername = false;
   private navigateTimer?: number;
 
   constructor(
@@ -57,8 +40,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private msg: NzMessageService,
-    private userService: UserService,
-    private destroyRef: DestroyRef,
   ) {}
 
   ngOnDestroy(): void {
@@ -79,8 +60,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
               Validators.maxLength(20),
               Validators.pattern(/^[a-zA-Z0-9_]+$/),
             ],
-            asyncValidators: [this.uniqueUsernameValidator()],
-            updateOn: 'blur',
           },
         ],
         email: ['', { validators: [Validators.required, Validators.email] }],
@@ -93,12 +72,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
       },
       { validators: this.confirmPasswordValidator.bind(this) } as AbstractControlOptions,
     );
-
-    this.validateForm.get('username')?.statusChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((status) => {
-        this.validatingUsername = status === 'PENDING';
-      });
   }
 
   confirmPasswordValidator(control: AbstractControlOptions) {
@@ -106,30 +79,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
     const password = form.get('password')?.value;
     const confirmPassword = form.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { mismatch: true };
-  }
-
-  private uniqueUsernameValidator(): AsyncValidatorFn {
-    return (control: AbstractControl): Observable<ValidationErrors | null> => {
-      if (control.invalid || control.pristine) {
-        return of(null);
-      }
-
-      const username = control.value?.trim();
-      if (!username) {
-        return of(null);
-      }
-      return of(username).pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        switchMap((name) =>
-          this.userService.checkUsername(name).pipe(
-            map((isUnique) => (isUnique ? null : { alreadyExists: true })),
-            catchError(() => of(null)),
-          ),
-        ),
-        first(),
-      );
-    };
   }
 
   getUsernameErrorTip(): string {
@@ -152,12 +101,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.validateForm.markAllAsTouched();
 
     if (this.validateForm.valid) {
-      const usernameControl = this.validateForm.get('username');
-      if (usernameControl?.pending) {
-        this.msg.warning('正在校验用户名，请稍候...', { nzDuration: 3000 });
-        return;
-      }
-
       const { username, nickname, email, password } = this.validateForm.value;
 
       this.authService.register({ username, nickname, email, password }).subscribe((res) => {

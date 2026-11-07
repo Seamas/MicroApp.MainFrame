@@ -1,10 +1,6 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
-const AUTH_ENDPOINTS = [
-  '/api/rbac/auth/login',
-  '/api/rbac/auth/register',
-  '/api/rbac/users/check-username',
-];
+const AUTH_ENDPOINTS = ['/api/rbac/auth/login', '/api/rbac/auth/register'];
 
 export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
   const token = sessionStorage.getItem('token');

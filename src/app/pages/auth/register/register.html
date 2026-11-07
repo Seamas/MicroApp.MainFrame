@@ -10,9 +10,7 @@
       <nz-form-item>
         <nz-form-control [nzErrorTip]="getUsernameErrorTip()" nzHasFeedback [nzValidateStatus]="usernameControl">
             <input nz-icon="user" formControlName="username" nz-input placeholder="用户名" />
-            @if(validatingUsername) {
-              <nz-spin nzSize="small" nzTip="正在校验用户名"></nz-spin>
-            }
+
         </nz-form-control>
       </nz-form-item>
 
