@@ -17,7 +17,7 @@ COPY default.conf  /etc/nginx/conf.d/default.conf
 
 # 假设你已在本地运行 npm run build，dist 目录在宿主机
 # 构建时复制 dist 内容到 nginx html 目录
-COPY dist/mainapp /usr/share/nginx/html/mainapp
+COPY dist/mainapp/browser /usr/share/nginx/html/mainapp
 COPY dist/subapp /usr/share/nginx/html/subapp
 
 # 暴露端口
