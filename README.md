@@ -1,71 +1,74 @@
-# node.js
+# MainApp（微前端基座）
 
-```
-node -v
-```
+Angular 21 微前端基座，提供登录认证、RBAC 管理（用户 / 角色 / 菜单 / 接口）以及子应用动态路由。
 
-output
-```
-v20.20.0
-```
+## 环境要求
 
+- Node.js `>=18.19.1 <24.0.0`
+- pnpm `>=9.0.0`（`packageManager`: `pnpm@9.15.0`）
 
-# MainApp
-
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.2.
-
-## Development server
-
-To start a local development server, run:
+## 安装与开发
 
 ```bash
-ng serve
+pnpm install
+ng serve --proxy-config proxy.conf.json
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+浏览器访问 `http://localhost:4200/`。
 
-## Code scaffolding
+开发服务器通过 `proxy.conf.json` 将 `/api/rbac/**` 代理到 `http://localhost:5202`，并去掉 `/api` 前缀。该代理未写入 `angular.json`，因此启动时必须显式传入 `--proxy-config`。
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+后端默认端口为 `5202`（见 `backend/MyWebProject.Host/Properties/launchSettings.json`），可先启动依赖：
 
 ```bash
-ng generate component component-name
+docker compose -f backend/docker-compose.yml up -d postgres redis
+dotnet run --project backend/MyWebProject.Host
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 构建
 
 ```bash
-ng generate --help
+pnpm build        # 等价于 ng build
 ```
 
-## Building
+产物默认输出到 `dist/main-app/`，`baseHref` 为 `/mainapp/`。
 
-To build the project run:
+> `Dockerfile` 复制的是 `dist/mainapp`。如需直接使用该 Dockerfile，请在 `angular.json` 中设置
+> `"outputPath": "dist/mainapp"`，或构建后把 `dist/main-app` 重命名为 `dist/mainapp`。
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## 单元测试
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+使用 Vitest 运行。项目未配置端到端测试框架。
 
-For end-to-end (e2e) testing, run:
+## 目录结构
 
-```bash
-ng e2e
+```
+src/app/
+├── core/            # 模型、服务、拦截器、守卫、会话存储
+├── layouts/         # 基座布局、菜单、子应用容器
+├── pages/           # 登录/注册、用户、角色、菜单、接口管理页面
+├── app.config.ts    # 路由、HTTP 拦截器、ng-zorro 配置
+├── app.routes.ts    # 基座路由
+└── icons-provider.ts
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+- 组件均为 standalone，`@schematics/angular:component` 默认 `skipTests: true`。
+- UI 使用 ng-zorro-antd，图标在 `icons-provider.ts` 注册。
+- 路径别名：`@app/*`、`@core/*`、`@shared/*`（见 `tsconfig.json`）。
+- 会话数据（token / username / nickname / 可见菜单）存放在 `sessionStorage`。
 
-## Additional Resources
+## 微前端
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- `src/main.ts` 启动 `@micro-zoe/micro-app`。
+- `LayoutComponent` 拉取用户可见菜单并构建菜单树；`code === 'microapp'` 的菜单会被动态注册到 `MicroAppContainerComponent`，由后者渲染 `<micro-app>` 并下发子路由；`code === 'router'` 的菜单走 Angular 内部路由。
+
+## 部署
+
+`Dockerfile` 基于 `nginx:alpine`，`default.conf` 分别托管：
+
+- `/mainapp/` → 基座构建产物
+- `/subapp/` → 子应用构建产物

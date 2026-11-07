@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Common Commands
 
-- **Install**: `pnpm install` (requires pnpm >=9.0.0, Node >=18.19.1)
-- **Dev server**: `ng serve` → `http://localhost:4200/`
-- **Build (prod)**: `ng build` → outputs to `dist/`
+- **Install**: `pnpm install` (requires pnpm >=9.0.0, Node >=18.19.1 <24.0.0; `packageManager` is pnpm@9.15.0)
+- **Dev server**: `ng serve --proxy-config proxy.conf.json` → `http://localhost:4200/` (the proxy config is not wired into `angular.json`)
+- **Build (prod)**: `ng build` → outputs to `dist/main-app/` (Angular default for project `main-app`; `Dockerfile` expects `dist/mainapp`, so set `outputPath` or rename before building the image)
 - **Build (watch/dev)**: `ng build --watch --configuration development`
 - **Unit tests**: `ng test` (uses Vitest)
 - **Code scaffolding**: `ng generate component|service|guard <name>`
@@ -23,7 +23,7 @@ This is an **Angular 21 micro-frontend shell** (基座) that hosts sub-applicati
 
 ### HTTP layer
 
-- **`apiInterceptor`** (`src/app/core/interceptors/api.interceptor.ts`): Unwraps the `ApiResult<T>` envelope (`{ success, message, data }`). On success, it extracts `data` so services receive the payload directly. On failure, it shows an error toast via `NzMessageService`. HTTP 401 clears the user session.
+- **`apiInterceptor`** (`src/app/core/interceptors/api.interceptor.ts`): Unwraps the `ApiResult<T>` envelope (`{ code, message, data, success, timestamp }`). On success, it extracts `data` so services receive the payload directly. On failure, it shows an error toast via `NzMessageService`. HTTP 401 clears the user session.
 - **`tokenInterceptor`** (`src/app/core/interceptors/token.interceptor.ts`): Attaches `Authorization: Bearer <token>` from sessionStorage.
 - **`RawHttpClient`** (`src/app/core/services/raw.http.ts`): Uses `HttpBackend` directly to bypass all interceptors — used only by `AppConfigService` to load `config/app.config.json`.
 
@@ -41,14 +41,14 @@ Session-based, stored in `sessionStorage` via `src/app/core/stores/userstore.ts`
 
 ### Backend API
 
-- All API calls go to `/api/rbac/**`. The dev server proxies `/api/rbac` → `http://localhost:5202` (configured in `proxy.conf.json`), with `/api/` prefix stripped.
+- All API calls go to `/api/rbac/**`. When started with `ng serve --proxy-config proxy.conf.json`, the dev server proxies `/api/rbac` → `http://localhost:5202`, with the `/api` prefix stripped (`pathRewrite`).
 - Production uses Nginx (`default.conf`) serving the Angular build at `/mainapp/` and sub-app builds at `/subapp/`.
 
 ### Component conventions
 
 - All components are **standalone** (Angular 21 default). `@schematics/angular:component` is configured with `skipTests: true`.
 - UI library: **ng-zorro-antd** (NG-ZORRO). Icons from `@ant-design/icons-angular`, registered in `src/app/icons-provider.ts`.
-- Path aliases in `tsconfig.json`: `@app/*` → `src/app/*`, `@core/*` → `src/app/core/*`.
+- Path aliases in `tsconfig.json`: `@app/*` → `src/app/*`, `@core/*` → `src/app/core/*`, `@shared/*` → `src/app/shared/*`.
 - Styles use SCSS. Build `baseHref` is `/mainapp/`.
 
 ### Docker deployment
