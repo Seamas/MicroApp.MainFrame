@@ -35,9 +35,14 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
           if (apiResult.hasOwnProperty('success')) {
             if (apiResult.success) {
               return response.clone({ body: apiResult.data });
-            } else {
-              throw new Error(apiResult.message || '请求失败');
             }
+
+            if (apiResult.code === 401) {
+              inject(PermissionService).clearMenuCache();
+              removeUserInfo();
+            }
+
+            throw new Error(apiResult.message || '请求失败');
           }
         }
       }

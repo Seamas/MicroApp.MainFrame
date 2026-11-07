@@ -27,6 +27,33 @@ export function getNickname(): string | null {
   return sessionStorage.getItem(NICKNAME_KEY);
 }
 
+function isTokenExpired(token: string): boolean {
+  try {
+    const payloadPart = token.split('.')[1];
+    if (!payloadPart) {
+      return true;
+    }
+
+    const normalized = payloadPart.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+    const payload = JSON.parse(atob(padded));
+
+    return typeof payload.exp === 'number' && payload.exp * 1000 <= Date.now();
+  } catch {
+    return true;
+  }
+}
+
 export function isLoggedIn(): boolean {
-  return sessionStorage.getItem(TOKEN_KEY) !== null;
+  const token = getToken();
+  if (!token) {
+    return false;
+  }
+
+  if (isTokenExpired(token)) {
+    removeUserInfo();
+    return false;
+  }
+
+  return true;
 }
