@@ -13,7 +13,7 @@ export class AuthService {
   public nickname: string = '';
 
   constructor(private http: HttpClient) {
-    this.nickname = localStorage.getItem('nickname') || '';
+    this.nickname = sessionStorage.getItem('nickname') || '';
   }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {

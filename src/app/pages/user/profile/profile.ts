@@ -61,6 +61,7 @@ export class ProfileComponent implements OnInit {
       try {
         const res = await firstValueFrom(this.authService.updateProfile({ nickname, email }));
         this.authService.nickname = res.nickname;
+        sessionStorage.setItem('nickname', res.nickname);
         this.profileForm.patchValue({
           username: res.username,
           nickname: res.nickname,
