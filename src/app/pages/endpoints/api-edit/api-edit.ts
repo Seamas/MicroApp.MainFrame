@@ -1,10 +1,9 @@
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
   FormBuilder,
   FormGroup,
-  NgModel,
   ReactiveFormsModule,
   ValidationErrors,
   Validators,
@@ -18,7 +17,17 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 
-import { firstValueFrom } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  first,
+  firstValueFrom,
+  map,
+  Observable,
+  of,
+  switchMap,
+} from 'rxjs';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { FormErrorService } from '../../../core/services/form-error.service';
@@ -58,7 +67,11 @@ export class ApiEditComponent implements OnInit {
     this.form = this.fb.group({
       url: [
         data?.endpoint?.url || '',
-        { validators: [Validators.required, Validators.pattern('^/.+')] },
+        {
+          validators: [Validators.required, Validators.pattern('^/.+')],
+          asyncValidators: [this.uniqueUrlValidator()],
+          updateOn: 'blur',
+        },
       ],
       apiGroup: [data?.endpoint?.apiGroup || ''],
       description: [data?.endpoint?.description || ''],
@@ -68,6 +81,35 @@ export class ApiEditComponent implements OnInit {
   }
 
   async ngOnInit() {}
+
+  private uniqueUrlValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      if (this.isEdit && control.value === this.data.endpoint?.url) {
+        return of(null);
+      }
+
+      if (control.invalid || control.pristine) {
+        return of(null);
+      }
+
+      const url = control.value?.trim();
+      if (!url) {
+        return of(null);
+      }
+
+      return of(url).pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        switchMap((urlValue) =>
+          this.endpointService.checkUrl(urlValue, this.isEdit ? this.id : undefined).pipe(
+            map((isUnique) => (isUnique ? null : { alreadyExists: true })),
+            catchError(() => of(null)),
+          ),
+        ),
+        first(),
+      );
+    };
+  }
 
   async onSubmit() {
     // 触发表单所有控件的验证，确保显示所有验证错误

@@ -27,6 +27,10 @@ export class ApiEndpointService {
     return this.http.post<PageResultModel<ApiEndpoint>>(`/api/rbac/endpoints/search`, query);
   }
 
+  checkUrl(url: string, id?: number): Observable<boolean> {
+    return this.http.post<boolean>(`/api/rbac/endpoints/check-url`, { id: id ?? null, url });
+  }
+
   createApiEndpoint(endpoint: CreateApiEndpointRequest): Observable<boolean> {
     return this.http.post<boolean>(`/api/rbac/endpoints/create`, endpoint);
   }
