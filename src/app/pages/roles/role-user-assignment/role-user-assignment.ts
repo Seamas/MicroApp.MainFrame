@@ -6,7 +6,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { User } from '../../../core/models/requests/user.model';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { Role } from '../../../core/models/requests/role.model';
 import { UserService } from '../../../core/services/user.service';
 import { RoleService } from '../../../core/services/role.service';
@@ -36,6 +36,7 @@ export class RoleUserAssignmentComponent implements OnInit {
   loading = false;
 
   constructor(
+    private modalRef: NzModalRef,
     private msg: NzMessageService,
     @Inject(NZ_MODAL_DATA) public data: { role: Role },
     private cdr: ChangeDetectorRef,
@@ -153,6 +154,7 @@ export class RoleUserAssignmentComponent implements OnInit {
       );
       if (res === true) {
         this.msg.success('管理用户范围已更新成功');
+        this.modalRef.close(true);
       } else {
         this.msg.error('管理用户范围更新失败');
       }

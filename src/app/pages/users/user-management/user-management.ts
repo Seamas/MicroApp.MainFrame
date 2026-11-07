@@ -135,7 +135,12 @@ export class UserManagementComponent implements OnInit {
       nzClosable: true,
     });
 
-    modalRef.afterClose.subscribe((result) => {});
+    modalRef.afterClose.subscribe((result) => {
+      if (result) {
+        this.msg.success('角色分配成功!', { nzDuration: 3000 });
+        this.loadUsers();
+      }
+    });
   }
 
   async openPermissionsModal(user: User) {

@@ -135,7 +135,12 @@ export class RoleManagementComponent implements OnInit {
       nzClosable: true,
       nzWidth: 800,
     });
-    modalRef.afterClose.subscribe((result) => {});
+    modalRef.afterClose.subscribe((result) => {
+      if (result) {
+        this.message.success('管理用户范围更新成功!', { nzDuration: 3000 });
+        this.loadRoles();
+      }
+    });
   }
 
   async openRolePermissionModal(role: Role) {
@@ -147,7 +152,12 @@ export class RoleManagementComponent implements OnInit {
       nzMaskClosable: false,
       nzClosable: true,
     });
-    modalRef.afterClose.subscribe((result) => {});
+    modalRef.afterClose.subscribe((result) => {
+      if (result) {
+        this.message.success('权限分配成功!', { nzDuration: 3000 });
+        this.loadRoles();
+      }
+    });
   }
 
   async toggleStatus(newValue: boolean, role: Role) {
