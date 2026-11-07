@@ -18,6 +18,7 @@ import { MenuDto } from '../../core/models/menu-dto.model';
 
 import { MenuComponent } from '../menu/menu';
 import { PermissionService } from '../../core/services/permission.service';
+import { Menu } from '../../core/models/requests/menu.model';
 
 @Component({
   selector: 'app-layout',
