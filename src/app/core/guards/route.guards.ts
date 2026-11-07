@@ -31,12 +31,10 @@ export const menuGuard = async (): Promise<boolean | UrlTree> => {
   const router = inject(Router);
   const permissionService = inject(PermissionService);
 
-  const targetPath = router.getCurrentNavigation()?.finalUrl?.toString();
-  if (!targetPath) {
-    return true;
-  }
+  const targetPath =
+    router.getCurrentNavigation()?.finalUrl?.toString() || router.url;
 
-  const segments = targetPath.split('/').filter(Boolean);
+  const segments = targetPath.split('?')[0].split('#')[0].split('/').filter(Boolean);
   const firstSegment = segments[0] || '';
 
   if (ALLOWED_PATHS_WITHOUT_MENU.includes(firstSegment)) {

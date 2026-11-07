@@ -5,7 +5,7 @@ import {
   OnInit,
   ChangeDetectorRef,
 } from '@angular/core';
-import { Router, RouterModule, Route } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -18,8 +18,6 @@ import { MenuDto } from '../../core/models/menu-dto.model';
 
 import { MenuComponent } from '../menu/menu';
 import { PermissionService } from '../../core/services/permission.service';
-import { Menu } from '../../core/models/requests/menu.model';
-import { menuGuard } from '../../core/guards/route.guards';
 
 @Component({
   selector: 'app-layout',
@@ -53,57 +51,9 @@ export class LayoutComponent implements OnDestroy, OnInit {
     try {
       const allMenus = await firstValueFrom(this.permissionService.getUserVisibleMenus());
       this.menus = this.buildMenuTree(allMenus);
-      this.registerMicroAppRoutes(allMenus);
     } finally {
       this.cdr.detectChanges();
     }
-  }
-
-  private registerMicroAppRoutes(menus: Menu[]): void {
-    const microAppMenus = menus.filter(
-      (m) => m.code === 'microapp' && m.path,
-    );
-    if (microAppMenus.length === 0) return;
-
-    const layoutRoute = this.router.config.find(
-      (r) => r.component === LayoutComponent,
-    );
-    if (!layoutRoute || !layoutRoute.children) return;
-
-    const existingPaths = new Set(layoutRoute.children.map((r) => r.path));
-
-    for (const menu of microAppMenus) {
-      const path = menu.path!.replace(/^\//, '');
-      if (!path || existingPaths.has(path)) continue;
-
-      const microAppUrl = menu.microAppUrl?.startsWith('http')
-        ? menu.microAppUrl
-        : menu.microAppUrl?.startsWith('/')
-          ? `${window.location.origin}${menu.microAppUrl}`
-          : `${window.location.origin}/${path}`;
-
-      const childRoute: Route = {
-        path: '**',
-        loadComponent: () =>
-          import('../microapp-container/microapp-container').then(
-            (m) => m.MicroAppContainerComponent,
-          ),
-        data: {
-          microAppUrl,
-          microAppName: path,
-        },
-      };
-
-      layoutRoute.children.push({
-        path,
-        children: [childRoute],
-        canActivate: [menuGuard],
-      });
-
-      existingPaths.add(path);
-    }
-
-    this.router.resetConfig(this.router.config);
   }
 
   private buildMenuTree(menus: Menu[]): MenuDto[] {
@@ -129,6 +79,8 @@ export class LayoutComponent implements OnDestroy, OnInit {
         const parentNode = map.get(menu.parentId);
         if (parentNode) {
           parentNode.children?.push(menuNode!);
+        } else {
+          tree.push(menuNode!);
         }
       }
     });

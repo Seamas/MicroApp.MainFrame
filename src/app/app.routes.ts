@@ -6,6 +6,7 @@ import { RegisterComponent } from './pages/auth/register/register';
 import { ChangepwdComponent } from './pages/user/changepwd/changepwd';
 import { ProfileComponent } from './pages/user/profile/profile';
 import { authGuard, mainGuard, menuGuard } from './core/guards/route.guards';
+import { MicroAppContainerComponent } from './layouts/microapp-container/microapp-container';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [authGuard] },
@@ -53,6 +54,11 @@ export const routes: Routes = [
           import('./pages/endpoints/api-management/api-management').then(
             (m) => m.ApiManagementComponent,
           ),
+        canActivate: [menuGuard],
+      },
+      {
+        path: '**',
+        component: MicroAppContainerComponent,
         canActivate: [menuGuard],
       },
     ],

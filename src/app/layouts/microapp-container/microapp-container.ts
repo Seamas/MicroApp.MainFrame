@@ -8,6 +8,9 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { firstValueFrom } from 'rxjs';
+import { PermissionService } from '../../core/services/permission.service';
+import { Menu } from '../../core/models/requests/menu.model';
 
 @Component({
   selector: 'app-microapp-container',
@@ -20,20 +23,62 @@ export class MicroAppContainerComponent implements OnInit, OnDestroy {
   @ViewChild('container', { static: true }) container!: ElementRef;
 
   private microAppElement: any;
+  private microAppName = 'sub-app';
+  private basePath = '';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private renderer: Renderer2,
+    private permissionService: PermissionService,
   ) {}
 
-  ngOnInit(): void {
-    const microAppUrl = this.route.snapshot.data['microAppUrl'];
-    const microAppName = this.route.snapshot.data['microAppName'] || 'sub-app';
+  async ngOnInit(): Promise<void> {
+    let microAppUrl = this.route.snapshot.data['microAppUrl'];
+    let microAppName = this.route.snapshot.data['microAppName'];
 
-    if (microAppUrl) {
-      const basePath = this.ensureTrailingSlash(microAppUrl);
-      this.createMicroApp(basePath, microAppName);
+    if (!microAppUrl) {
+      const menu = await this.resolveMenu();
+      if (!menu?.path) {
+        return;
+      }
+
+      this.basePath = menu.path.replace(/^\//, '');
+      microAppName = this.basePath.replace(/\//g, '-');
+      microAppUrl = menu.microAppUrl?.startsWith('http')
+        ? menu.microAppUrl
+        : menu.microAppUrl?.startsWith('/')
+          ? `${window.location.origin}${menu.microAppUrl}`
+          : `${window.location.origin}/${this.basePath}`;
+    } else {
+      this.basePath = (microAppName || '').replace(/\//g, '-');
+    }
+
+    this.microAppName = microAppName || 'sub-app';
+    const basePath = this.ensureTrailingSlash(microAppUrl);
+    this.createMicroApp(basePath, this.microAppName);
+  }
+
+  private async resolveMenu(): Promise<Menu | null> {
+    try {
+      const menus = await firstValueFrom(this.permissionService.getUserVisibleMenus());
+      const currentPath = this.router.url.split('?')[0].split('#')[0].replace(/^\//, '');
+      const microAppMenus = menus.filter((menu) => menu.code === 'microapp' && menu.path);
+
+      const exact = microAppMenus.find(
+        (menu) => menu.path!.replace(/^\//, '') === currentPath,
+      );
+      if (exact) {
+        return exact;
+      }
+
+      return (
+        microAppMenus.find((menu) =>
+          currentPath.startsWith(menu.path!.replace(/^\//, '') + '/'),
+        ) || null
+      );
+    } catch {
+      return null;
     }
   }
 
@@ -73,26 +118,40 @@ export class MicroAppContainerComponent implements OnInit, OnDestroy {
   }
 
   private getSubRoute(): string {
-    const parentRoute = this.route.parent;
-    if (!parentRoute) return '/';
+    if (!this.basePath) {
+      return '/';
+    }
 
-    const basePath = parentRoute.routeConfig?.path;
-    if (!basePath) return '/';
+    const fullUrl = this.router.url.split('?')[0].split('#')[0];
+    const base = '/' + this.basePath;
+    const baseIndex = fullUrl.indexOf(base);
+    if (baseIndex === -1) {
+      return '/';
+    }
 
-    const fullUrl = this.router.url;
-    const baseIndex = fullUrl.indexOf('/' + basePath);
-    if (baseIndex === -1) return '/';
-
-    const subPath = fullUrl.substring(baseIndex + basePath.length + 1);
-    return subPath ? '/' + subPath : '/';
+    const subPath = fullUrl.substring(baseIndex + base.length);
+    return subPath ? (subPath.startsWith('/') ? subPath : '/' + subPath) : '/';
   }
 
   ngOnDestroy(): void {
+    const microApp = (window as any).microApp;
+    if (microApp?.unmount) {
+      try {
+        microApp.unmount(this.microAppName);
+      } catch {
+        // ignore unmount failures
+      }
+    }
+
     if (this.microAppElement) {
-      this.renderer.removeChild(
-        this.container.nativeElement,
-        this.microAppElement,
-      );
+      try {
+        this.renderer.removeChild(
+          this.container.nativeElement,
+          this.microAppElement,
+        );
+      } catch {
+        // element may already be removed by micro-app
+      }
       this.microAppElement = null;
     }
   }
